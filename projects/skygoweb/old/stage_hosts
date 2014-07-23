@@ -1,0 +1,11 @@
+[all:vars]
+env=dev
+
+[webtier]
+web1.{{ env }}.skygoweb.api.sky.com hostname=web1-{{ env }}
+
+[dbtier]
+hazelcast1.{{ env }}.skygoweb.api.sky.com hostname=redis1-{{ env }}
+
+[repo]
+jenkins.{{ env }}.skygoweb.api.sky.com hostname=build-{{ env }}

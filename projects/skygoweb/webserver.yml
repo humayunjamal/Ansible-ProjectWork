@@ -1,0 +1,9 @@
+---
+- hosts: webserver
+  sudo: yes
+  vars_files:
+    - roles/skygoweb-webserver/vars.yml
+  roles:
+    - common
+    - base
+    - skygoweb-webserver 

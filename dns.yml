@@ -1,0 +1,7 @@
+---
+#Update dns and tags with locally generated file
+- hosts: local
+  connection: local
+  gather_facts: False
+  tasks:
+    - include: projects/{{ project_prefix }}/route53.yml

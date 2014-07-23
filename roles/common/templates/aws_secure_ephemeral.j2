@@ -1,0 +1,115 @@
+#!/bin/bash
+
+#TODO: test this on actuall arrays
+
+if [ `df -k | grep tmpfs | grep /tmp/secure_ephemeral | wc -l` = 0 ]
+then
+  echo "Creating RAM disk"
+  test -d /tmp/secure_ephemeral || mkdir -p /tmp/secure_ephemeral
+  mount -t tmpfs -o size=2M tmpfs /tmp/secure_ephemeral/
+fi
+
+if [ ! -f /tmp/secure_ephemeral/setup_response ]
+then
+  echo "Creating setup_response"
+  random_key=`tr -dc "[:alpha:]" < /dev/urandom | head -c 32`
+  echo 'YES' > /tmp/secure_ephemeral/setup_response
+  echo $random_key >> /tmp/secure_ephemeral/setup_response
+  echo $random_key >> /tmp/secure_ephemeral/setup_response
+fi
+
+if [ ! -b /dev/md0 ]
+then
+  disk=`df -h | grep -v grep | awk 'NR==2{print $1}'`
+  # use a regex to match disk name
+  if [[ $disk =~ "/dev/xvda" ]]
+  then
+    disk_prefix=xv
+  else
+    disk_prefix=s
+  fi
+
+  disk_count=0
+  disk_list=""
+  # Read the partitions (same as fdisk -l), filter on disk name, exclude first
+  # disk and get correct column
+
+  if [ -f '/etc/init.d/cloud-set-guest-sshkey' ]
+    then
+      partition_check_command=$(cat /proc/partitions | egrep "${disk_prefix}d.[1-9]" | egrep -v "${disk_prefix}da"| awk '{print $4}')
+    else
+      partition_check_command=$(cat /proc/partitions | egrep "${disk_prefix}d.[1-9]?" | egrep -v "${disk_prefix}da"| awk '{print $4}')
+  fi
+
+  for disk in $partition_check_command
+  do
+    echo Unmounting /dev/$disk
+    if [ `mount | awk '{print $1}'| grep "^/dev/${disk}$" | wc -l` -gt 0 ]
+    then
+      umount /dev/$disk
+      if [ $? -gt 0 ]
+      then
+        echo umount Failed!
+        exit 1
+        else
+        echo Unmounted /dev/$disk
+      fi
+    fi
+
+    echo Removing /dev/$disk from /etc/fstab
+    if [ `grep /dev/$disk /etc/fstab | wc -l` -gt 0 ]
+    then
+      grep -v /dev/$disk /etc/fstab > /tmp/fstab
+      mv /etc/fstab /etc/fstab.$disk_count
+      mv /tmp/fstab /etc/fstab
+    fi
+
+    disk_list="$disk_list /dev/$disk"
+    ((disk_count++))
+  done
+
+  echo Creating RAID 0 from $disk_list
+  yes | mdadm --create /dev/md0 --force --level 0 --metadata 1.1 --chunk 256 --raid-devices=$disk_count $disk_list
+  mdadm --detail --scan >> /etc/mdadm/mdadm.conf
+  update-initramfs -u
+fi
+
+if [ `cryptsetup luksDump /dev/md0 | grep Cipher | wc -l` -lt 1 ]
+then
+  echo "Encrypt RAID0"
+  cryptsetup luksFormat /dev/md0 < /tmp/secure_ephemeral/setup_response
+fi
+
+if [  ! -h /dev/mapper/secure_ephemeral_raid0 ]
+then
+  echo "Running cryptsetup"
+  cat /tmp/secure_ephemeral/setup_response | cryptsetup luksOpen /dev/md0 secure_ephemeral_raid0
+fi
+
+if [ `file -sL /dev/mapper/secure_ephemeral_raid0 | grep filesystem | wc -l` -lt 1 ]
+then
+  echo "Creating filesystem {{ fstype }} on /dev/md0"
+  if [[ "{{ fstype }}" == "xfs" ]] ; then
+  	mkfs.xfs /dev/mapper/secure_ephemeral_raid0
+  else
+  	mkfs.{{ fstype }} -b 4096 -E stride=64,stripe-width=256 /dev/mapper/secure_ephemeral_raid0
+  fi
+fi
+
+if [ ! -d {{ secure_ephemeral_path }} ]
+then
+  "Creating {{ secure_ephemeral_path }}"
+  mkdir -pm  0755 {{ secure_ephemeral_path }}
+fi
+
+if [ `df | grep {{ secure_ephemeral_path }} | wc -l` -lt 1 ]
+then
+  mount /dev/mapper/secure_ephemeral_raid0 {{ secure_ephemeral_path }} -t {{ fstype }}
+fi
+
+if test -n "$(find {{ secure_ephemeral_init }}/scripts -maxdepth 1 -type f -print -quit)"
+then
+  for file in {{ secure_ephemeral_init }}/scripts/*
+    do source ${file}
+  done
+fi

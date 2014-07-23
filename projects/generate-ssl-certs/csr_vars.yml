@@ -1,0 +1,7 @@
+---
+generate_cert: true
+self_signed: false
+
+ssl_cert_dir: /root
+ssl_key_dir: /root
+

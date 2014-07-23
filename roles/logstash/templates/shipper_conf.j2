@@ -1,0 +1,14 @@
+input {
+  syslog {
+    type => syslog
+    port => {{ logstash_shipper_port }}
+  }
+}
+
+output {
+  redis { 
+    host => "{{ logstash_redis_host }}" 
+    data_type => "list" 
+    key => "syslog" 
+  }
+}

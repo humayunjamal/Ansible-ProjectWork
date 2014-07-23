@@ -1,0 +1,9 @@
+---
+- hosts: local
+  connection: local
+  gather_facts: False
+  vars_files:
+    - all_vars.yml
+    - "{{ app_name }}_vars.yml"
+  roles:
+    - openssl

@@ -1,0 +1,32 @@
+---
+#Create instances for web tiers, update route53 and instance tags
+- include: webtier.yml
+- include: apptier.yml
+- include: dbtier.yml
+
+- name: Get PWD
+  command: pwd
+  register: cwd
+  
+- name: Create route53 tasks
+  template: src=route53.j2 dest={{cwd.stdout}}/projects/{{ project_prefix }}/route53.yml mode=0644
+  register: has_dns
+  
+- name: Run play to process route53 tasks
+  command: ansible-playbook -i local dns.yml -e "env={{ env }} project_prefix={{ project_prefix }}"
+  when: has_dns|success
+  register: r53_done
+  
+- name: Remove dynamic route53.yml tasks file
+  file: path={{cwd.stdout}}/projects/{{ project_prefix }}/route53.yml state=absent
+  when: r53_done|success
+
+- name: Create environment inventory file
+  template: src=ansible_inventory.j2 dest={{cwd.stdout}}/projects/{{ project_prefix }}/{{ env }}{{ env_num }} mode=0644
+  register: inv_done
+  
+- name: Wait for 5 minutes to allow dns to update and instances to settle
+  pause: minutes=5
+  when: ec2web_a.changed == true or ec2web_b.changed == true or ec2app_a.changed == true or ec2app_b.changed == true or ec2db_a.changed or ec2db_b.changed
+
+

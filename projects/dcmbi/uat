@@ -1,0 +1,33 @@
+aws_vpc: vpc-fa332398
+
+aws_web_subnet_1a: subnet-711a2205
+web_subnet_1a: 10.50.50.0/25
+aws_web_subnet_1b: subnet-07da8241
+web_subnet_1b: 10.50.50.128/25
+aws_app_subnet_1a: subnet-771a2203
+app_subnet_1a: 10.50.51.0/24
+aws_app_subnet_1b: subnet-06da8240
+app_subnet_1b: 10.50.52.0/24
+aws_db_subnet_1a: subnet-721a2206
+db_subnet_1a: 10.50.53.0/24
+aws_db_subnet_1b: subnet-02da8244
+db_subnet_1b: 10.50.54.0/24
+
+aws_region: eu-west-1
+env_prefix: ueuw1
+aws_dns_zone: "{{ env_prefix }}.api.bskyb.com"
+aws_key_name: "{{ env_prefix }}"
+
+base_group: sg-3d719658
+java_opts: "-Denvironment=uat-ueuw1"
+env_num: 1
+
+#number of instances per availability zone
+web_count_1b: 2
+web_count_1a: 2
+app_count_1a: 2
+app_count_1b: 2
+
+#inital value of counter for dns records
+app_count: 1
+web_count: 1

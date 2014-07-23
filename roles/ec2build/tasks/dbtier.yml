@@ -1,0 +1,43 @@
+---
+#Create dbtier instances
+- name: Create nodes for db tier zone a
+  ec2:
+    instance_type: "{{ db_size }}"
+    region: "{{ aws_region }}"
+    image: "{{ db_ami }}"
+    key_name: "{{ aws_key_name }}"
+    vpc_subnet_id: "{{ aws_db_subnet_1a }}"
+    group: "['{{ env_prefix }}-SG{{ project_prefix }}Db', {{ db_group_a }}]"
+    instance_tags:
+      env: "{{ env_prefix }}"
+      Name: "{{ env_prefix }}:{{ project_prefix }}:db:{{ env_num }}:a"
+      role: dbtier
+    exact_count: "{{ db_count_1a }}"
+    count_tag:
+      Name: "{{ env_prefix }}:{{ project_prefix}}:db:{{ env_num }}:a"
+      role: dbtier
+  register: ec2db_a
+  when: db_serv
+  tags:
+    - dbservers
+  
+- name: Create nodes for db tier zone b
+  ec2:
+    instance_type: "{{ db_size }}"
+    region: "{{ aws_region }}"
+    image: "{{ db_ami }}"
+    key_name: "{{ aws_key_name }}"
+    vpc_subnet_id: "{{ aws_db_subnet_1b }}"
+    group: "['{{ env_prefix }}-SG{{ project_prefix }}Db', {{ db_group_b }}]"
+    instance_tags:
+      env: "{{ env_prefix }}"
+      Name: "{{ env_prefix }}:{{ project_prefix }}:db:{{ env_num }}:b"
+      role: dbtier
+    exact_count: "{{ db_count_1b }}"
+    count_tag:
+      Name: "{{ env_prefix }}:{{ project_prefix}}:db:{{ env_num }}:b"
+      role: dbtier
+  register: ec2db_b
+  when: db_serv
+  tags:
+    - dbservers

@@ -1,0 +1,39 @@
+---
+- name: Create base mount point for extra volume
+  file: path={{ base_dir }} state=directory
+  
+- name: Check if mount point is correct
+  command: mount
+  register: has_mount
+  
+- name: Install packages required for secure storage
+  apt: pkg={{ item }} state=installed
+  with_items:
+    - cryptsetup
+    - initramfs-tools
+    - lvm2 
+    - sharutils 
+    - mdadm 
+    - xfsprogs
+  when: use_sec_eph
+
+- name: Configure secure ephemral raid device startup script
+  template: src=aws_secure_ephemeral.j2 dest=/etc/init.d/aws_secure_ephemeral mode=0755
+  when: use_sec_eph
+  
+- name: Configure secure ephemral script to run at boot
+  file: src=/etc/init.d/aws_secure_ephemeral dest=/etc/rc2.d/S20-aws_secure_ephemeral state=link
+  when: use_sec_eph
+  
+- name: First run of secure ephemral script to create raid device for cassandra
+  command: /etc/init.d/aws_secure_ephemeral
+  when: use_sec_eph
+  
+- name: Update mount point for extra storage
+  command: sed -i 's/mnt/var\/sky/' /etc/fstab
+  when: "'var/sky' not in '{{ has_mount.stdout }}' and '/mnt' in '{{ has_mount.stdout }}'"
+  
+- name: Remount extra storage on new mount point
+  command: mount --move /mnt {{ base_dir }}
+  when: "'var/sky' not in '{{ has_mount.stdout }}' and '/mnt' in '{{ has_mount.stdout }}'"
+

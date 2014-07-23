@@ -1,0 +1,55 @@
+---
+
+- name: Create kibana group
+  user: name={{ kibana_group }}
+
+- name: Create kibana user
+  user: name={{ kibana_user }} group={{ kibana_group }} shell=/bin/bash
+
+- name: Create install directory
+  file: path={{ item }} owner={{ kibana_user }}  mode=0755 state=directory
+  with_items:
+   - "{{ kibana_installdir }}"
+   - "{{ kibana_branch }}"
+   - "{{ kibana_dashboards }}"
+
+- name: Check if kibana file is already downloaded
+  command: /usr/bin/test -e {{ kibana_installdir}}/{{ kibana_tarball }}
+  register: tarball_present
+  ignore_errors: True
+
+- name: Download kibana tarball
+  command: wget {{ kibana_download_url }} chdir={{ kibana_installdir }} creates={{ kibana_tarball }}
+  environment: proxy_env
+  when: tarball_present|failed
+
+
+- name: Extract kibana from tarball
+  command: tar -C {{ kibana_branch }} -xzf {{ kibana_installdir }}/{{ kibana_tarball }} --strip-components=1 chdir={{ kibana_installdir }}
+  sudo_user: "{{ kibana_user }}"
+
+- name: Remove Current directory in order to get symlink created
+  command: rm -rf {{ kibana_installdir }}/current
+
+- name: Create symlink for current 
+  file: src={{ kibana_branch }} dest={{ kibana_installdir }}/current state=link
+
+- name: Add config.js 
+  template: src=config.js.j2 dest={{ kibana_installdir }}/current/config.js owner={{ kibana_user }} group={{ kibana_group }} mode=0644
+
+- name: Check if link to logstash.json exists
+  command: /usr/bin/test -L {{ kibana_installdir }}/current/dashboards/default.json
+  register: link_present
+  ignore_errors: True
+
+- name: Create dashboards directory
+  file: path={{ kibana_dashboards }} state=directory owner={{ kibana_user }} mode=0755
+
+- name: Remove default.json file in order to get symlink created
+  command: rm -rf {{ kibana_installdir }}/current/dashboards/default.json
+
+- name: Create symlink for default.json
+  file: src={{ kibana_installdir }}/current/dashboards/logstash.json dest={{ kibana_installdir }}/current/dashboards/default.json state=link
+  when: link_present|failed
+
+- include: nginx.yml

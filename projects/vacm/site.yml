@@ -1,0 +1,8 @@
+---
+# This play deploys the instances to a cloudstack VPC
+- hosts: local
+  connection: local
+  gather_facts: False
+  roles:
+    - ec2build
+

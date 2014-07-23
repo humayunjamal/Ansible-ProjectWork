@@ -1,0 +1,35 @@
+---
+
+- name: Create appdynamics group
+  user: name={{ appdynamics_group }}
+
+- name: Create appdynamics user
+  user: name={{ appdynamics_user }} group={{ appdynamics_group }} createhome=yes shell=/bin/bash
+
+- name: Check if Agent zip file is already downloaded
+  command: /usr/bin/test -e {{ appdynamics_machine_agent_local_pkg_store }}
+  register: zip_present
+  ignore_errors: True
+
+- name: Get AppDynamics machine Agent tarball from s3
+  command: wget {{ appdynamics_machine_agent_download_url }} chdir=/tmp creates={{ appdynamics_machine_agent }}
+  environment: proxy_env
+  when: zip_present|failed
+
+- name: Create appdynamics machine agent dirs
+  file: path={{ item }} state=directory owner={{ appdynamics_user }} group={{ appdynamics_group }} mode=0775
+  with_items:
+   - "{{ appdynamics_machine_agent_logdir }}"
+   - "{{ appdynamics_machine_agent_install_dir }}"
+
+- name: Install package unzip
+  apt: pkg=unzip state=installed
+
+- name: Unzip Agent file 
+  command: unzip -qqo {{ appdynamics_machine_agent_local_pkg_store }} -d {{ appdynamics_machine_agent_install_dir }}
+  sudo_user: "{{ appdynamics_user }}"
+
+- name: Create controller info config file
+  template: src=controller-info.xml.j2 dest={{ appdynamics_machine_agent_install_dir }}/conf/controller-info.xml owner={{ appdynamics_user }} group={{ appdynamics_group }} mode=0644
+
+

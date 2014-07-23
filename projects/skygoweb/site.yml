@@ -1,0 +1,19 @@
+---
+- hosts: local
+  connection: local
+  tags: "{{ tier_name }}"
+  vars:
+    env: "{{ env }}"
+    aws_vars_file: "{{ c_type }}_{{ env }}_env.yml"
+    project_base: "projects/{{ project }}"
+    keystore: "{{ project_base }}/keys"
+    local_inventory: "{{ project_base }}/inventory" 
+  vars_files:
+    # Load Project Vars
+    - "{{ project }}_vars.yml"
+    # Load Tier / Server Type Vars
+    - "{{ tier_name }}_vars.yml"
+    # Load Env Vars (SG & Instance Config)
+    - "{{ aws_vars_file }}"
+  roles: 
+    - ec2auto

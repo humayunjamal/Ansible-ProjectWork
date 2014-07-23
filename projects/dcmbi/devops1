@@ -1,0 +1,16 @@
+[all:vars]
+env=devops
+use_openjdk=false
+
+
+
+[dbtier]
+dcmbidb11.oeuw1.api.bskyb.com  host_ip=10.50.83.100 instance_id=i-23a6b163 aws_name=ip-10-50-83-100
+dcmbidb12.oeuw1.api.bskyb.com  host_ip=10.50.83.101 instance_id=i-2ca6b16c aws_name=ip-10-50-83-101
+dcmbidb13.oeuw1.api.bskyb.com  host_ip=10.50.84.184 instance_id=i-b809e3fa aws_name=ip-10-50-84-184
+
+
+[invdata]
+dcmbidb11.oeuw1.api.bskyb.com
+dcmbidb12.oeuw1.api.bskyb.com
+dcmbidb13.oeuw1.api.bskyb.com

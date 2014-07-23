@@ -1,0 +1,95 @@
+---
+- name: Create security group for web tier
+  ec2_group:
+    name: "{{ env_prefix }}-SG{{ project_prefix }}Web"
+    description: Access to Technical Metadata Service Web Servers
+    vpc_id: "{{ aws_vpc }}"
+    region: "{{ aws_region }}"
+    rules:
+    - proto: tcp
+      from_port: 80
+      to_port: 80
+      cidr_ip: 10.0.0.0/8
+    - proto: tcp
+      from_port: 22
+      to_port: 22
+      cidr_ip: 10.0.0.0/8
+  register: ec2websg
+
+- name: Create security group for app tier
+  ec2_group:
+    name: "{{ env_prefix }}-SG{{ project_prefix }}App"
+    description: Access to Technical Metadata Service App Servers
+    vpc_id: "{{ aws_vpc }}"
+    region: "{{ aws_region }}"
+    rules:
+    - proto: tcp
+      from_port: 8080
+      to_port: 8080
+      cidr_ip: 10.0.0.0/8
+    - proto: tcp
+      from_port: 8080
+      to_port: 8080
+      group_id: "{{ ec2websg.group_id }}"
+    - proto: tcp
+      from_port: 8081
+      to_port: 8081
+      cidr_ip: 10.0.0.0/8
+    - proto: tcp
+      from_port: 8081
+      to_port: 8081
+      group_id: "{{ ec2websg.group_id }}"
+    - proto: tcp
+      from_port: 9090
+      to_port: 9090
+      cidr_ip: 10.0.0.0/8
+    - proto: tcp
+      from_port: 8880
+      to_port: 8880
+      cidr_ip: 10.0.0.0/8
+    - proto: tcp
+      from_port: 8881
+      to_port: 8881
+      cidr_ip: 10.0.0.0/8
+    - proto: tcp
+      from_port: 22
+      to_port: 22
+      cidr_ip: 10.0.0.0/8
+  register: ec2appsg
+
+- name: Create security group for db tier
+  ec2_group:
+    name: "{{ env_prefix }}-SG{{ project_prefix }}Db"
+    description: Access to Technical Metadata Service Db Servers
+    vpc_id: "{{ aws_vpc }}"
+    region: "{{ aws_region }}"
+    rules:
+    - proto: tcp
+      from_port: 7000
+      to_port: 7000
+      cidr_ip: 10.0.0.0/8
+    - proto: tcp
+      from_port: 7000
+      to_port: 7000
+      group_id: "{{ ec2appsg.group_id }}"
+    - proto: tcp
+      from_port: 9042
+      to_port: 9042
+      cidr_ip: 10.0.0.0/8
+    - proto: tcp
+      from_port: 9042
+      to_port: 9042
+      group_id: "{{ ec2appsg.group_id }}"
+    - proto: tcp
+      from_port: 9160
+      to_port: 9160
+      cidr_ip: 10.0.0.0/8
+    - proto: tcp
+      from_port: 9160
+      to_port: 9160
+      group_id: "{{ ec2appsg.group_id }}"
+    - proto: tcp
+      from_port: 22
+      to_port: 22
+      cidr_ip: 10.0.0.0/8
+  register: ec2dbsg

@@ -1,0 +1,20 @@
+
+env_prefix: u1euw1
+env_num: 1
+
+#number of instances per availability zone
+web_count_1b: 2
+web_count_1a: 2
+app_count_1a: 2
+app_count_1b: 2
+
+#inital value of counter for dns records
+app_count: 1
+web_count: 1
+
+aws_size: c1.medium
+aws_ami: ami-fadfd48e
+
+app_serv: true
+web_serv: true
+db_serv: false

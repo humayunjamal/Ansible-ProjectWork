@@ -1,0 +1,9 @@
+---
+base_dir: /var/sky
+base_log_dir: "{{ base_dir }}/log"
+base_pid_dir: "{{ base_dir }}/run"
+
+graphite_host: graphite
+graphite_port: 2003
+
+keys_path: /root/.keys

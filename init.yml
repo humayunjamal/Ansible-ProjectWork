@@ -1,0 +1,19 @@
+---
+#play to install environment instances
+- hosts: local
+  connection: local
+  gather_facts: False
+  vars_files:
+    - projects/{{ project_prefix }}/{{ c_type }}_{{ env }}_env.yml
+    - base_vars.yml
+  pre_tasks:
+    #include security groups
+    #- include: projects/{{ project_prefix }}/aws_sec_groups.yml
+  roles:
+    - ec2build
+  tasks:
+    - name: Configure app tier
+      command: ansible-playbook -i projects/{{ project_prefix }}/{{ env }}{{ env_num }} projects/{{ project_prefix }}/apptier.yml -e "project_prefix={{ project_prefix }} c_type={{ c_type }}"
+      register: app_done
+      when: app_serv
+

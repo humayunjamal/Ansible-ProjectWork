@@ -1,0 +1,5 @@
+---
+
+- name: Add cronjob to clean daily logs
+  action: cron name="daily-logs-cleanup" hour="0" minute="59" user="root" job="find {{ rsyslog_remote_dir }} -type f -mtime +1 -delete"
+

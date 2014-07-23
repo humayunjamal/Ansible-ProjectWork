@@ -1,0 +1,65 @@
+#! /bin/bash
+### BEGIN INIT INFO
+# Provides:          cassandra
+# Required-Start:    $remote_fs $network $named $time
+# Required-Stop:     $remote_fs $network $named $time
+# Should-Start:      ntp mdadm
+# Should-Stop:       ntp mdadm
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: distributed storage system for structured data
+# Description:       Cassandra is a distributed (peer-to-peer) system for
+#                    the management and storage of structured data.
+### END INIT INFO
+
+
+
+export JAVA_HOME=/usr/lib/jvm/default-java
+export PATH=$JAVA_HOME/bin:$PATH
+export CASSANDRA_HOME={{ cassandra_base_dir }}/cassandra
+export CASSANDRA_BIN_DIR=${CASSANDRA_HOME}/bin
+export CASSANDRA_INCLUDE=${CASSANDRA_BIN_DIR}/cassandra.in.sh
+export IP_ADDRESS=`ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{print $1}'`
+export CASSANDRA_YAML=$CASSANDRA_HOME/conf/cassandra.yaml
+CASSANDRA_PID_DIR=/var/run/cassandra
+CASSANDRA_PID_FILE=$CASSANDRA_PID_DIR/server.pid
+
+test -d $CASSANDRA_PID_DIR || mkdir $CASSANDRA_PID_DIR
+chown cassandra $CASSANDRA_PID_DIR
+
+startCassandra() {
+    ulimit -n 100000
+    ulimit -u 100000
+    su cassandra -c "$CASSANDRA_BIN_DIR/cassandra -p $CASSANDRA_PID_FILE"
+}
+
+shutdownCassandra() {
+    if [[ -f $CASSANDRA_PID_FILE && -n $(cat $CASSANDRA_PID_FILE) ]]
+    then
+        # Flush column families from memtables into sstables.
+        $CASSANDRA_BIN_DIR/nodetool disablegossip
+        $CASSANDRA_BIN_DIR/nodetool disablethrift
+        $CASSANDRA_BIN_DIR/nodetool drain
+
+        cat $CASSANDRA_PID_FILE | xargs -i{} kill {}
+        rm $CASSANDRA_PID_FILE
+    fi
+}
+
+# See how we were called.
+case "$1" in
+    start)
+        startCassandra
+        ;;
+    stop)
+        shutdownCassandra
+        ;;
+    restart)
+        $0 stop
+        sleep 5
+        $0 start
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|restart}"
+        exit 1
+esac

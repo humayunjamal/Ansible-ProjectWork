@@ -1,0 +1,16 @@
+---
+#hanlder for common roles
+- name: restart ntp
+  service: name=ntp state=restarted
+
+- name: reload resolvconf
+  command: /sbin/resolvconf -u
+
+- name: reboot server
+  command: /sbin/reboot
+
+- name: restart rsyslog
+  service: name=rsyslog state=restarted
+
+- name: Add entries to hosts file 
+  template: src=hosts.j2 dest=/etc/hosts

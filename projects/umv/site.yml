@@ -1,0 +1,19 @@
+---
+# Play to install environment instances
+- hosts: localhost
+  connection: local
+  gather_facts: False
+  vars_file:
+    - projects/{{ project_prefix }}/{{ c_type }}{{ env }}_env.yml
+  tasks:
+    - name: Configure db tier
+      command: ansible-playbook -i {{ env }}{{ env_num }} dbtier.yml
+      when: db_serv
+
+    - name: Configure web tier
+      command: ansible-playbook -i {{ env }}{{ env_num }} webtier.yml
+      when: web_serv
+
+    - name: Configure app tier
+      command: ansible-playbook -i {{ env }}{{ env_num }} apptier.yml
+      when: app_serv

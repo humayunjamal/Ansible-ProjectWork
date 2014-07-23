@@ -1,0 +1,3 @@
+---
+- include: aws_jenkins_slaves.yml
+- include: jenkins_slaves.yml

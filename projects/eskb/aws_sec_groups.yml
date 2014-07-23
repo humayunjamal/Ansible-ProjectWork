@@ -1,0 +1,26 @@
+---
+
+- name: Create security group for app tier
+  ec2_group:
+    name: "{{ env_prefix }}-SG{{ project_prefix }}App"
+    description: Access to ESKB servers
+    vpc_id: "{{ aws_vpc }}"
+    region: "{{ aws_region }}"
+    rules:
+    - proto: tcp
+      from_port: 9300
+      to_port: 9300
+      cidr_ip: 10.50.144.0/20
+    - proto: tcp
+      from_port: 9300
+      to_port: 9400
+      group_id: "{{ec2appsg.group_id}}"
+    - proto: tcp
+      from_port: 9200
+      to_port: 9200
+      cidr_ip: 10.50.144.0/20
+    - proto: tcp
+      from_port: 22
+      to_port: 22
+      cidr_ip: 10.0.0.0/8
+  register: ec2appsg

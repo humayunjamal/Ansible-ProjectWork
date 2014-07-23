@@ -1,0 +1,64 @@
+$MaxMessageSize 32k
+
+#################
+#### MODULES ####
+#################
+
+$ModLoad imtcp
+#$ModLoad imudp
+$ModLoad imuxsock
+$ModLoad imklog
+
+# By default, log entries will have control codes converted by rsyslog to their octal values
+# (e.g. tab will show up as #011.) The conversion can be prevented by adding:
+#       $EscapeControlCharactersOnReceive off
+# Turning off setting is particularly useful for multi-line logs e.g. Java exceptions
+# Control-code conversion. The default is on.
+$EscapeControlCharactersOnReceive off
+
+# Templates
+
+# log every host in its own directory
+$template RemoteHost,"{{ rsyslog_remote_host_path }}"
+
+### Rulesets
+
+# Local Logging
+$RuleSet local
+kern.*                                                 /var/log/syslog
+*.info;mail.none;authpriv.none;cron.none                /var/log/syslog
+authpriv.*                                              /var/log/secure
+mail.*                                                  -/var/log/maillog
+cron.*                                                  /var/log/cron
+*.emerg                                                 *
+uucp,news.crit                                          /var/log/spooler
+local7.*                                                /var/log/boot.log
+# Forward local logs to logstash
+$ActionSendTCPRebindInterval 1000
+*.* 	@@{{ rsyslog_logstash_host }}:{{ rsyslog_logstash_port }}
+$ActionExecOnlyWhenPreviousIsSuspended on
+& /var/log/localbuffer
+$ActionExecOnlyWhenPreviousIsSuspended off
+# Use the "local" RuleSet as default if not specified otherwise
+$DefaultRuleset local
+
+# Remote Logging
+$RuleSet remote
+*.* ?RemoteHost
+# Send messages we receive to Logstash
+$ActionSendTCPRebindInterval 1000
+*.* 	@@{{ rsyslog_logstash_host }}:{{ rsyslog_logstash_port }}
+# Failover to Secondary Logstash server if Primary is unavailable
+$ActionExecOnlyWhenPreviousIsSuspended on
+& /var/log/localbuffer
+$ActionExecOnlyWhenPreviousIsSuspended off
+
+### Listeners
+
+# Bind ruleset to tcp listener
+$InputTCPServerBindRuleset remote
+# and activate it:
+$InputTCPServerRun {{ rsyslog_incoming_port }}
+
+#$InputUDPServerBindRuleset remote
+#$UDPServerRun 514

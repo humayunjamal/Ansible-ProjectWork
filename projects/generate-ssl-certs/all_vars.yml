@@ -1,0 +1,12 @@
+---
+base_dir: /var/sky
+base_log_dir: "{{ base_dir }}/log"
+base_pid_dir: "{{ base_dir }}/run"
+
+ssl_gen_subj: "/C=GB/ST=Middlesex/L=Isleworth/O=British Sky Broadcasting Group Plc/OU=OTTCP/CN={{ ssl_gen_cn }}"
+project_prefix: generate-ssl-certs
+
+ssl_key_bits: 2048
+ssl_key_type: rsa
+ssl_key_gentype: genrsa
+ssl_key_crypt: -des3

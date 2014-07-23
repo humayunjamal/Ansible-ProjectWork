@@ -1,0 +1,26 @@
+---
+web_size: "{{ aws_size }}"
+app_size: "{{ aws_size }}"
+db_size: "{{ aws_size }}"
+
+web_ami: "{{ aws_ami }}"
+app_ami: "{{ aws_ami }}"
+db_ami: "{{ aws_ami }}"
+
+web_group_1a:
+web_group_1b:
+app_group_1a:
+app_group_1b:
+db_group_1a:
+db_group_1b:
+
+aws_ami: ami-fadfd48e
+aws_eki: aki-71665e05
+aws_size: t1.micro
+
+web_count_1b: 0
+web_count_1a: 0
+app_count_1a: 0
+app_count_1b: 0
+db_count_1a: 0
+db_count_1b: 0

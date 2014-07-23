@@ -1,0 +1,14 @@
+nginx_log_dir: "{{ base_log_dir }}/nginx"
+delete_default_vhost: false
+nginx_user: www-data
+worker_processes: "{{ ansible_processor_count }}"
+pid: "{{ base_pid_dir }}/nginx.pid"
+worker_connections: 100
+processes:
+ - { name: "nginx", pattern: "nginx" }
+#f5 details for load balancer config
+f5_ip: 10.255.129.201
+f5_pool_name: uat-crmAPI-ELB
+f5_user: ottcp-f5-api
+f5_pwd: KG6cI9TFIjbWXUzB 
+use_sec_eph: no

@@ -1,0 +1,16 @@
+---
+app_name: skygoweb
+app_user: skygoweb
+app_group: apps
+app_home: "{{ base_dir }}/skygoweb"
+site_name: "skygoweb.api.sky.com"
+required_packages:
+    - vim
+    - python-pycurl
+    - tree
+forbidden_packages:
+    - command-not-found-data
+    - command-not-found
+repo_distro: precise
+repo_section: main
+repo_url: "build.{{ env }}.skygoweb.api.sky.com"

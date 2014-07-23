@@ -1,0 +1,2 @@
+# Crontab file for kicking off the redis Append only file rewrite process 
+30 03 * * * root {{ logstash_redis_data_dir }}/src/redis-cli BGREWRITEAOF &> /dev/null

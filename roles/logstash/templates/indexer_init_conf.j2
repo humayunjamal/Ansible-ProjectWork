@@ -1,0 +1,30 @@
+# logstash - indexer instance
+#
+
+description     "logstash indexer instance"
+
+start on virtual-filesystems
+stop on runlevel [06]
+
+respawn
+respawn limit 5 30
+limit nofile 65550 65550
+expect fork
+
+# set HOME to point to where you want the embedded elasticsearch
+# data directory to be created and ensure /opt/logstash is owned
+# by logstash:adm
+
+#env HOME=<%=node['logstash']['logstash_home']%>
+
+env JAVA_OPTS='-Xms7168m -Xmx7168m'
+
+chdir {{ logstash_home }}
+console log
+
+# for versions 1.1.1 - 1.1.4 the internal web service crashes when touched
+# and the current workaround is to just not run it and run Kibana instead
+
+script
+  su -s /bin/sh -c 'exec "$0" "$@"' logstash -- /usr/bin/java -jar logstash.jar agent -f {{ logstash_home }}/logstash_indexer.conf --log {{ logstash_log_dir }}/logstash-indexer.log &
+end script

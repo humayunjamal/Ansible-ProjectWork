@@ -1,0 +1,3 @@
+ACLOGTYPE (LoggingContainerRequestFilter|ActivityCaptureContainerResponseLoggingFilter|LoggingFilterHelper|TimingLogger)
+ACLOG %{DATA} ac %{LOGLEVEL:AC_LOG_LEVEL} %{DATA}%{ACLOGTYPE:AC_LOG_TYPE} - \[%{DATA:AC_SESSION_ID}\] %{GREEDYDATA:AC_REQUEST_DATA}
+SKYNGINXWEB %{DATA:log_type} %{HOSTNAME:http_vhost} - \[%{HTTPDATE:http_date}\] \"%{HTTPMETH:http_method} %{URIPATHPARAM:http_path} HTTP/%{NUMBER:http_version}\" %{NUMBER:http_status} %{NUMBER:http_bytes} %{QS:http_referrer} %{QS:http_user_agent} %{DATA:http_client_addr} request_time: %{NUMBER:http_request_time}

@@ -1,0 +1,15 @@
+description     "ElasticSearch service"
+
+start on runlevel [2345]
+stop on runlevel [!2345]
+
+respawn
+
+script
+        sudo su {{ elasticsearch_user }}
+        ulimit -n 65535
+        ulimit -l unlimited
+        export ES_MAX_MEM={{ elasticsearch_maxmem }}
+        export ES_MIN_MEM={{ elasticsearch_minmem }}
+        {{ elasticsearch_home }}/bin/elasticsearch -f  >>{{ elasticsearch_logs_dir }}/elasticsearch.log
+end script

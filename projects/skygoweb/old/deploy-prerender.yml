@@ -1,0 +1,7 @@
+---
+- hosts: webtier
+  vars_files:
+    - all_vars.yml
+    - roles/prerender/vars.yml
+  tasks:
+    - include: roles/prerender/tasks/pre-render.yml

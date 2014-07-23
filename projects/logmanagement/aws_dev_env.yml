@@ -1,0 +1,29 @@
+# In here we should specifc AWS subnets, VPC & instance
+
+aws:
+  env:
+    num: 1
+    name: d1euw1
+  region: eu-west-1
+  vpc: vpc-1e28307c
+  base_sg: sg-92c62ff7
+  size: m1.large
+  key: "d1euw1"
+  web:
+    subnet_1a: 
+      id: subnet-f3b6bf87 
+      cidr: 10.50.40.0/24
+    count: 1
+  build:
+    subnet_1a: 
+      id: subnet-fcb6bf88
+      cidr: 10.50.45.0/24
+    count: 1
+  db:
+    subnet_1a: 
+      id: subnet-f2b6bf86
+    subnet_cidr_1a: 10.50.43.0/24
+    count: 1
+  dns:
+    zone: "d1euw1.api.bskyb.com"
+

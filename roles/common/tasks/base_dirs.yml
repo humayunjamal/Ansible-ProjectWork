@@ -1,0 +1,10 @@
+---
+- name: Create base mount point for extra volume
+  file: path={{ base_dir }} state=directory
+  
+- name: Create base pid dir
+  file: path={{ base_pid_dir }} state=directory mode=0777
+
+- name: Create base mount point for logs
+  file: path={{ base_log_dir }} state=directory
+

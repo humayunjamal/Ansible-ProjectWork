@@ -1,0 +1,24 @@
+---
+- set_fact: 
+    aws_access_key: "{{ lookup('env','AWS_ACCESS_KEY') }}"
+    aws_secret_key: "{{ lookup('env','AWS_SECRET_KEY') }}"
+- debug: var=aws_access_key
+
+- name: Install required python packages
+  apt: pkg={{ item }} state=present
+  with_items:
+  - python-dateutil
+  - python-magic
+
+- name: Download s3cmd tarball
+  s3: bucket=stratos-binary-artifacts object=/mirrors/s3cmd/{{ s3cmd_archive }} dest=/tmp/s3cmd.tgz mode=get aws_access_key={{ lookup('env','AWS_ACCESS_KEY') }} aws_secret_key={{ lookup('env','AWS_SECRET_KEY') }}
+
+- name: Decompress s3cmd
+  command: tar xzf /tmp/s3cmd.tgz -C /tmp
+
+- name: Install s3cmd
+  command: python setup.py install chdir=/tmp/s3cmd-{{ s3cmd_version }}  creates=/usr/local/bin/s3cmd
+
+- name: Configure s3cmd config file
+  template: src=s3cfg.j2 dest={{ s3cmd_home }}/.s3cfg  mode=0600 owner={{ s3cmd_user }}
+

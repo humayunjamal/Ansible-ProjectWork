@@ -1,0 +1,12 @@
+---
+# This Playbook deploys a 3 node mongodb replication set for the vacm api 
+- hosts: invdata
+  gather_facts: True
+
+- hosts: dbtier
+  sudo: yes
+  roles:
+    - common
+    - mongod
+    
+

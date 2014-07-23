@@ -1,0 +1,32 @@
+---
+#vars file for cassandra reporting cluster install
+# this is a 3 node cluster.
+cassandra_cluster_size: 3
+cassandra_archive: "apache-cassandra-{{ cassandra_vers }}-bin.tar.gz"
+app_base_dir: /apps
+base_data_dir: "{{ app_base_dir }}/data/"
+cassandra_config_dir: "{{ app_base_dir }}/cassandra/conf"
+cassandra_user: cassandra
+cassandra_vers: 1.2.14
+jna_ver: 3.5.1
+cluster_name: DCMBI
+cassandra_data_dir: "{{ base_data_dir }}/cassandra/data"
+cassandra_saved_cache_dir: "{{ cassandra_data_dir }}/saved_cache"
+cassandra_commitlog_dir: "{{ cassandra_data_dir }}/commitlog"
+cassandra_log_dir: "{{ cassandra_data_dir }}/logs"
+cassandra_lib_dir: "{{ app_base_dir }}/cassandra/lib"
+key_cache_size_in_mb: 1024
+row_cache_size_in_mb: 0
+increase_heap_by_mb: 0
+snitch_type: SimpleSnitch
+use_sec_eph: yes
+secure_ephemeral_path: /apps
+fstype: ext4
+secure_ephemeral_init: /etc/aws_secure_ephemeral
+keys_path: /root/.keys
+graphite_host: graphite
+graphite_port: 2003
+processes:
+ - { name: "java", pattern: "cassandra" }
+java_type: oracle
+java_version: oracle-java7-installer

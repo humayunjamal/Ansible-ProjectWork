@@ -1,0 +1,11 @@
+---
+db_type: hazelcast
+db_version: 3.2
+db_user: hazelcast
+db_port: {{ aws.db.port }}
+db_peers: ""
+db_network:  "10.*.*.*"
+has_db_manager: "true"
+db_manager_url: "http://hzmanager.cf1a.{{ env }}.api.bskyb.com/private/v26"
+db_install_base: "{{ base_dir }}/hazelcast-{{ db_version }}"
+db_log_file: "/var/log/hazelcast.log"

@@ -1,0 +1,43 @@
+---
+#Create apptier instances
+- name: Create nodes for app tier zone a
+  ec2:
+    instance_type: "{{ app_size }}"
+    region: "{{ aws_region }}"
+    image: "{{ app_ami }}"
+    key_name: "{{ aws_key_name }}"
+    vpc_subnet_id: "{{ aws_app_subnet_1a }}"
+    group: "['{{ env_prefix }}-SG{{project_prefix}}App','{{app_group_a}}']"
+    instance_tags:
+      env: "{{ env_prefix }}"
+      Name: "{{ env_prefix }}:{{ project_prefix }}:app:{{ env_num }}:a"
+      role: apptier
+    exact_count: "{{ app_count_1a }}"
+    count_tag:
+      Name: "{{ env_prefix }}:{{ project_prefix}}:app:{{ env_num }}:a"
+      role: apptier
+  register: ec2app_a
+  when: app_serv
+  tags:
+    - appservers
+  
+- name: Create nodes for app tier zone b
+  ec2:
+    instance_type: "{{ app_size }}"
+    region: "{{ aws_region }}"
+    image: "{{ app_ami }}"
+    key_name: "{{ aws_key_name }}"
+    vpc_subnet_id: "{{ aws_app_subnet_1b }}"
+    group: "['{{ env_prefix }}-SG{{project_prefix}}App','{{app_group_b}}']"
+    instance_tags:
+      env: "{{ env_prefix }}"
+      Name: "{{ env_prefix }}:{{ project_prefix }}:app:{{ env_num }}:b"
+      role: apptier
+    exact_count: "{{ app_count_1b }}"
+    count_tag:
+      Name: "{{ env_prefix }}:{{ project_prefix}}:app:{{ env_num }}:b"
+      role: apptier
+  register: ec2app_b
+  when: app_serv
+  tags:
+    - appservers

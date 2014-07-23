@@ -1,0 +1,19 @@
+#log shipping for cassandra
+$ModLoad imfile # needs to be done just once
+$InputFilePollInterval 1
+
+# system.log
+$InputFileName {{ cassandra_logs_dir }}/system.log
+$InputFileTag cassandra_system
+$InputFileStateFile cassandra_system
+$InputFileSeverity info
+$InputFileFacility local0
+$InputRunFileMonitor
+
+# backup.log
+$InputFileName {{ cassandra_logs_dir }}/backup.log
+$InputFileTag cassandra_backup
+$InputFileStateFile cassandra_backup
+$InputFileSeverity info
+$InputFileFacility local1
+$InputRunFileMonitor

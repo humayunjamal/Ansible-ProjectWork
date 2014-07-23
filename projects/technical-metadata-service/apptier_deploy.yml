@@ -1,0 +1,9 @@
+---
+- hosts: "{{ app_name }}"
+  gather_facts: no
+  sudo: yes
+  vars_files:
+    - "{{ c_type }}_{{ env }}_env.yml"
+  tags: tms
+  roles:
+    - tms

@@ -1,0 +1,70 @@
+#  Default rules for rsyslog.
+#
+#			For more information see rsyslog.conf(5) and /etc/rsyslog.conf
+
+#
+# First some standard log files.  Log by facility.
+#
+auth,authpriv.*			{{ base_log_dir }}/auth.log
+*.*;auth,authpriv.none		-{{ base_log_dir }}/syslog
+#cron.*				{{ base_log_dir }}/cron.log
+#daemon.*			-{{ base_log_dir }}/daemon.log
+kern.*				-{{ base_log_dir }}/kern.log
+#lpr.*				-{{ base_log_dir }}/lpr.log
+mail.*				-{{ base_log_dir }}/mail.log
+#user.*				-{{ base_log_dir }}/user.log
+
+#local 5 channel for vacm logs
+local5.*				-{{ base_log_dir }}/vacm.log
+#
+# Logging for the mail system.  Split it up so that
+# it is easy to write scripts to parse these files.
+#
+#mail.info			-{{ base_log_dir }}/mail.info
+#mail.warn			-{{ base_log_dir }}/mail.warn
+mail.err			{{ base_log_dir }}/mail.err
+
+#
+# Logging for INN news system.
+#
+news.crit			{{ base_log_dir }}/news/news.crit
+news.err			{{ base_log_dir }}/news/news.err
+news.notice			-{{ base_log_dir }}/news/news.notice
+
+#
+# Some "catch-all" log files.
+#
+#*.=debug;\
+#	auth,authpriv.none;\
+#	news.none;mail.none	-{{ base_log_dir }}/debug
+#*.=info;*.=notice;*.=warn;\
+#	auth,authpriv.none;\
+#	cron,daemon.none;\
+#	mail,news.none		-{{ base_log_dir }}/messages
+
+#
+# Emergencies are sent to everybody logged in.
+#
+*.emerg                                :omusrmsg:*
+
+#
+# I like to have messages displayed on the console, but only on a virtual
+# console I usually leave idle.
+#
+#daemon,mail.*;\
+#	news.=crit;news.=err;news.=notice;\
+#	*.=debug;*.=info;\
+#	*.=notice;*.=warn	/dev/tty8
+
+# The named pipe /dev/xconsole is for the `xconsole' utility.  To use it,
+# you must invoke `xconsole' with the `-file' option:
+# 
+#    $ xconsole -file /dev/xconsole [...]
+#
+# NOTE: adjust the list below, or you'll go crazy if you have a reasonably
+#      busy site..
+#
+daemon.*;mail.*;\
+	news.err;\
+	*.=debug;*.=info;\
+	*.=notice;*.=warn	|/dev/xconsole

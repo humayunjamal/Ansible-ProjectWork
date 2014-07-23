@@ -1,0 +1,13 @@
+skygoweb:
+   webserver:
+     serverConfig:
+       protocol: http
+       hostname: "{{ skygoweb.app.hostname }}"
+       multithread: true
+       prerenderurl: "{{ skygoweb.prerender.url }}"
+       dcm:
+          host: "{{ skygoweb.app.hostname }}"
+          secretkey: "{{ skygoweb.dcm.secretkey }}"
+          clientid: "{{ skygoweb.dcm.clientid }}"
+          ssoprovider: "{{ skygoweb.dcm.ssoprovider }}"
+  

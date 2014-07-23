@@ -1,0 +1,16 @@
+---
+#Deploy war file to tomcat server instance
+- hosts: apptier
+  sudo: yes
+  gather_facts: false
+  vars_files:
+    - apptier_vars.yml
+  tasks:
+    - name: Download WAR from jenkins
+      shell: wget --no-check-certificate -O {{ tomcat_deploy_dir }}/{{app_name}}.war {{ binary_artifact_url }}
+      environment:
+        http_proxy: http://10.50.56.10:80
+        https_proxy: https://10.50.56.10:80
+    
+    - name: Restart tomcat for new version
+      service: name=tomcat7 state=restarted enabled=yes

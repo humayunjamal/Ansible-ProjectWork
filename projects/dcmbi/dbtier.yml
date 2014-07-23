@@ -1,0 +1,12 @@
+---
+#play for cassandra installation
+- hosts: dbtier
+  sudo: yes
+  vars_files:
+    - dbtier_vars.yml
+  pre_tasks:
+    - include_vars: "{{ c_type }}_{{ env }}.yml"
+  roles:
+    - common
+    - java 
+    - cassandra

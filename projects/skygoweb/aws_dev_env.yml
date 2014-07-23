@@ -1,0 +1,72 @@
+skygoweb:
+  app:
+     hostname: dev.skygoweb.api.sky.com
+  logging:
+     level: INFO
+     syslog:
+        servers: 
+               - { name: rsyslog,  port: 5514 }
+               - { name: rsyslog-2, port: 514 }
+aws:
+  region: eu-west-1
+  image: ami-0b2bee7c
+  vpc_id: vpc-1e28307c
+  key_name: d1euw1
+  env_tag: d1euw1
+  inventory:
+    groups:
+       - { name: dbserver }
+       - { name: webserver }
+  sg:
+    -  name: d1euw1-skygoweb-SGweb
+       desc: Security rules for Sky Go Web servers
+       tag: webserver
+       state: present
+       rules:
+          - { proto: tcp, from_port: 80, to_port: 80, cidr_ip: 90.216.134.192/26 }
+          - { proto: tcp, from_port: 80, to_port: 80, cidr_ip: 80.238.0.0/19 }
+          - { proto: tcp, from_port: 80, to_port: 80, cidr_ip: 90.216.150.192/26 }
+          - { proto: tcp, from_port: 80, to_port: 80, cidr_ip: 10.0.0.0/8 }
+    -  name: d1euw1-skygoweb-SGdatabase
+       desc: Security rules to Sky Go DB servers
+       tag: dbserver
+       state: present
+       rules:
+          - { proto: tcp, from_port: 5701, to_port: 5701, group_name: d1euw1-skygoweb-SGweb }
+  nodes:
+    - { az: a,
+        tag: dbserver,
+        instance_type: t1.micro,
+        subnet_id: subnet-f2b6bf86,
+        assign_public_ip: no,
+        sec_groups: [ d1euw1-base-sgBase-1O4T5H1VQ5ZB2, d1euw1-skygoweb-SGdatabase ],
+        name_tag: "d1euw1:skygoweb:db",
+        role_tag: skygoweb-dbserver,
+        instance_count: 1 }
+    - { az: b,
+        tag: dbserver,
+        instance_type: t1.micro,
+        subnet_id: subnet-88c9e0ce,
+        assign_public_ip: no,
+        sec_groups: [ d1euw1-base-sgBase-1O4T5H1VQ5ZB2, d1euw1-skygoweb-SGdatabase ],
+        name_tag: "d1euw1:skygoweb:db",
+        role_tag: skygoweb-dbserver,
+        instance_count: 1 }
+    - { az: a,
+        tag: webserver,
+        instance_type: t1.micro,
+        subnet_id: subnet-f2b6bf86,
+        assign_public_ip: no,
+        sec_groups: [ d1euw1-base-sgBase-1O4T5H1VQ5ZB2, d1euw1-skygoweb-SGweb ],
+        name_tag: "d1euw1:skygoweb:web",
+        role_tag: skygoweb-webserver,
+        instance_count: 1 }
+    - { az: b,
+        tag: webserver,
+        instance_type: t1.micro,
+        subnet_id: subnet-88c9e0ce,
+        assign_public_ip: no,
+        sec_groups: [ d1euw1-base-sgBase-1O4T5H1VQ5ZB2, d1euw1-skygoweb-SGweb ],
+        name_tag: "d1euw1:skygoweb:web",
+        role_tag: skygoweb-webserver,
+        instance_count: 1 }

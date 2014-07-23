@@ -1,0 +1,14 @@
+---
+- hosts: jenkins-master
+  gather_facts: False
+  sudo: yes
+  tags: jenkins_master
+  vars:
+    proxy_env:
+      http_proxy: http://proxy:80
+      https_proxy: http://proxy:80
+  roles:
+    - ntp_client
+    - nginx_ssl
+    - oracle_jdk7
+    - jenkins_master

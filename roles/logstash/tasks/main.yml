@@ -1,0 +1,33 @@
+---
+
+- name: Create logstash group
+  user: name={{ logstash_group }}
+
+- name: Create logstash user
+  user: name={{ logstash_user }} group={{ logstash_group }} createhome=yes shell=/bin/bash
+
+- name: Create logstash dirs
+  file: path={{ item }} state=directory owner={{ logstash_user }} group={{ logstash_group }}
+  with_items:
+   - "{{ logstash_home }}"
+   - "{{ logstash_log_dir}}"
+
+- name: Check if logstash jar file is already downloaded 
+  command: /usr/bin/test -e {{ logstash_basedir}}/logstash-{{ logstash_version }}-flatjar.jar
+  register: tarball_present
+  ignore_errors: True
+
+- name: Get logstash jar from s3
+  command: wget {{ logstash_download_url }} chdir={{ logstash_basedir}}
+  environment: proxy_env
+  when: tarball_present|failed
+
+- name: Create link to symlink
+  file: src={{ logstash_basedir }}/logstash-{{ logstash_version }}-flatjar.jar dest={{ logstash_basedir }}/logstash.jar state=link
+
+- name: Add logrotate script
+  template: src=logstash_logrotate.j2 dest=/etc/logrotate.d/logstash owner=root group=root mode=0644
+
+- include: indexer.yml
+- include: redis.yml
+- include: shipper.yml

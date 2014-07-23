@@ -1,0 +1,21 @@
+[local]
+localhost
+
+[jenkins-slaves-ss]
+jenkins-ci01.sseuw1.api.bskyb.com name=SSEUW1A:jenkins-ci01
+jenkins-ci02.sseuw1.api.bskyb.com name=SSEUW1A:jenkins-ci02
+
+[jenkins-slaves-devops]
+jenkins-slave1.oeuw1.api.bskyb.com name=OEUW1A:jenkins-slave1
+
+[jenkins-slaves-dev1]
+jenkins-slave1.d1euw1.api.bskyb.com name=D1EUW1A:jenkins-slave1
+
+[jenkins-slaves-uat1]
+jenkins-slave1.u1euw1.api.bskyb.com name=U1EUW1A:jenkins-slave1
+
+[jenkins-slaves-uat2]
+jenkins-slave1.u2euw1.api.bskyb.com name=U2EUW1A:jenkins-slave1
+
+[jenkins-slaves-uat3]
+jenkins-slave1.u3euw1.api.bskyb.com name=U3EUW1A:jenkins-slave1

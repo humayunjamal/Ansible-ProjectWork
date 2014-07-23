@@ -1,0 +1,13 @@
+---
+
+- name: Install package rsyslog
+  apt: pkg=rsyslog state=installed
+
+- name: Create rsyslog directory
+  file: path={{ rsyslog_remote_dir }} state=directory owner=syslog group=adm mode=0755
+
+- name: Add rsyslog config file
+  template: src=rsyslog_server_conf.j2 dest=/etc/rsyslog.conf owner=root group=root mode=0644
+
+- name: Restart rsyslog
+  service: name=rsyslog state=restarted

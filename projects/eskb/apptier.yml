@@ -1,0 +1,4 @@
+- hosts: apptier
+  sudo: yes
+  roles:
+    - logstash

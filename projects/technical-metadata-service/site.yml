@@ -1,0 +1,18 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: False
+  vars_files:
+    - "{{ c_type }}_{{ env }}_env.yml"
+  tasks:
+    - name: Configure db tier
+      command: ansible-playbook -i {{ env }}{{ env_num }} dbtier.yml
+      when: db_serv
+
+    - name: Configure app tier
+      command: ansible-playbook -i {{ env }}{{ env_num }} apptier.yml
+      when: app_serv
+
+    - name: Configure web tier
+      command: ansible-playbook -i {{ env }}{{ env_num }} web.yml
+      when: web_serv

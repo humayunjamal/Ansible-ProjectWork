@@ -1,0 +1,70 @@
+---
+
+{% if web_serv | bool %}
+{% set weblist = ec2web_a.tagged_instances + ec2web_b.tagged_instances %}
+{% for ip in weblist %}
+{% set num = web_count + loop.index0 %}
+- name: Add route53 entries for the web servers
+  route53:
+    command=create
+    zone={{ aws_dns_zone }}
+    record={{ project_prefix }}web{{env_num}}{{num}}.{{ aws_dns_zone }}
+    type=A
+    ttl=120
+    value={{ ip.private_ip }}
+    overwrite=yes
+  
+- name: Update tags on instance
+  ec2_tag: resource={{ ip.id }} state=present region=eu-west-1
+  args:
+    tags:
+      dnsname: "{{ project_prefix }}web{{env_num}}{{num}}.{{ aws_dns_zone }}"
+
+{% endfor %}
+{% endif %}
+
+{% if app_serv | bool %}
+{% set applist = ec2app_a.tagged_instances + ec2app_b.tagged_instances %}
+{% for ip in applist %}
+{% set num = app_count + loop.index0 %}
+- name: Add route53 entries for the app servers
+  route53:
+    command=create
+    zone={{ aws_dns_zone }}
+    record={{ project_prefix }}app{{env_num}}{{num}}.{{ aws_dns_zone }}
+    type=A
+    ttl=120
+    value={{ ip.private_ip }}
+    overwrite=yes
+
+- name: Update tags on instance
+  ec2_tag: resource={{ ip.id }} state=present region=eu-west-1
+  args:
+    tags:
+      dnsname: "{{ project_prefix }}app{{env_num}}{{num}}.{{ aws_dns_zone }}"
+
+{% endfor %}
+{% endif %}
+
+{% if db_serv | bool %}
+{% set dblist = ec2db_a.tagged_instances + ec2db_b.tagged_instances %}
+{% for ip in dblist %}
+{% set num = db_count + loop.index0 %}
+- name: Add route53 entries for the db servers
+  route53:
+    command=create
+    zone={{ aws_dns_zone }}
+    record={{ project_prefix }}db{{env_num}}{{num}}.{{ aws_dns_zone }}
+    type=A
+    ttl=120
+    value={{ ip.private_ip }}
+    overwrite=yes
+    
+- name: Update tags on instance
+  ec2_tag: resource={{ ip.id }} state=present region=eu-west-1
+  args:
+    tags:
+      dnsname: "{{ project_prefix }}db{{env_num}}{{num}}.{{ aws_dns_zone }}"
+
+{% endfor %}
+{% endif %}

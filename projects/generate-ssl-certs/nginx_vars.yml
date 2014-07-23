@@ -1,0 +1,6 @@
+---
+generate_cert: true
+self_signed: true
+
+ssl_cert_dir: /etc/nginx
+ssl_key_dir: /etc/nginx

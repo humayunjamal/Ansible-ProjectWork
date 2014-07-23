@@ -1,0 +1,8 @@
+[local]
+localhost
+
+[local:vars]
+app_serv=true
+web_serv=true
+db_serv=false
+

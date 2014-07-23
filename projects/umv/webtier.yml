@@ -1,0 +1,18 @@
+---
+# This Playbook configures the web tier 
+
+- hosts: invdata
+  gather_facts: True
+
+- hosts: webtier
+  sudo: yes
+  vars_files:
+   - webtier_vars.yml
+  roles:
+    - common
+    - nginx
+
+
+
+
+     

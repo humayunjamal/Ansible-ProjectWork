@@ -1,0 +1,13 @@
+---
+- hosts: invdata
+  gather_facts: True
+
+- hosts: dbtier
+  sudo: yes
+  vars_files:
+   - dbtier_vars.yml
+  roles:
+    - common
+    - apt_internal
+    - java
+    - cassandra

@@ -1,0 +1,37 @@
+skygoweb:
+  app:
+      home: /opt/ott/skygoweb
+      hostname: skygoweb.api.sky.com
+      port: 80
+  contentserver:
+     hostname: stubbed.skygoweb.bskyb.com
+     port: 80
+  dcm:
+     hostname: dcm.skygoweb.bskyb.com
+     port: 80
+     secretkey: test-secret
+     clientid: test
+     ssoprovider: SKY
+  dns:
+     search_base: skygoweb.api.sky.com
+  logging:
+     level: INFO
+     syslog:
+        servers: 
+               - { name: localhost, port: 514 }
+  prerender:
+     url: "http://localhost:3030/"
+  pkg:
+     install: [ "python-pycurl", "tree", "vim" ]
+     remove: [ "command-not-found-data", "command-not-found" ]
+  repo:
+      - { "deb http://apt.sseuw1.api.bskyb.com precise-skygoweb main" }
+  users:
+      add:
+         - { name: jenkins,
+             group: jenkins,
+             shell: /bin/bash,
+             system: yes,
+             home: /home/jenkins,
+             createhome: yes,
+             createsshkey: no }

@@ -1,0 +1,14 @@
+---
+aws_env: SSEUW1A
+name: "{{ aws_env }}:internal-repo"
+region: eu-west-1
+vpc: vpc-5d46543f
+subnet: subnet-261d1952
+sg: "{{ name }}"
+instance_type: m3.medium
+ami: ami-0b2bee7c
+key: sseuw1
+private_ip: 10.50.135.220
+eip: 54.72.180.122
+jump_a: 10.50.135.20
+jump_b: 10.50.136.20

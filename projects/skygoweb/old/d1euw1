@@ -1,0 +1,14 @@
+[all:vars]
+env=d1euw1
+make_db=false
+
+[buildtier]
+
+[dbtier]
+
+[apptier]
+
+[d1euw1:children]
+dbtier
+buildtier
+webtier

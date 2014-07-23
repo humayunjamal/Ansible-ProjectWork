@@ -1,0 +1,19 @@
+---
+
+delete_default_vhost: "true"
+kibana_group: "www-data"
+kibana_user: "www-data"
+kibana_installdir: /apps/kibana
+kibana_branch: "{{ kibana_installdir }}/master"
+kibana_dashboards: "{{ kibana_installdir }}/current/dashboards"
+kibana_download_url: "https://s3-eu-west-1.amazonaws.com/stratos-binary-artifacts/mirrors/Kibana/master.tar.gz"
+kibana_tarball: "master.tar.gz"
+nginx_worker_processes: 8 
+nginx_log_dir: /var/log/nginx
+nginx_pid: /var/run/nginx.pid
+nginx_worker_connections: 100000
+nginx_dir: /etc/nginx
+kibana_host_name: "{{ ansible_hostname }}"
+nginx_listen_port: 5601
+kibana_es_server: "esearch"
+kibana_es_port: 9200

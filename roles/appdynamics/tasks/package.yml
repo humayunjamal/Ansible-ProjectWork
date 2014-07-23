@@ -1,0 +1,16 @@
+---
+#Tasks to deploy appdynamics
+# prereqs:
+# disk partition available for data - aws secure ephemeral script
+- set_fact:
+    aws_access_key: "{{ lookup('env','AWS_ACCESS_KEY') }}"
+    aws_secret_key: "{{ lookup('env','AWS_SECRET_KEY') }}"
+- debug: var=aws_access_key
+- debug: var=aws_secret_key
+
+- name: Remove the tarball if it already exists
+  command: rm -rf {{ appdynamics_controller_local_pkg_store }}
+
+- name: Get AppDynamics tarball from s3
+  s3: bucket=stratos-binary-artifacts object=/{{ appdynamics_package }} dest={{ appdynamics_controller_local_pkg_store }} mode=get aws_access_key={{ lookup('env','AWS_ACCESS_KEY') }} aws_secret_key={{ lookup('env','AWS_SECRET_KEY') }}
+  register: cass_down

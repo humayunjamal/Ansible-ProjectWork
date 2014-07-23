@@ -1,0 +1,13 @@
+#!/bin/bash
+#
+# Any local changes will be deleted.
+
+# not using full path so that upgrades can stop the old agent too
+AGENT="/usr/local/appdynamics-machine-agent-.*/machineagent.jar"
+
+PS_OUT=`ps -u {{ appdynamics_user }} -o pid,user,command | grep $AGENT | grep -v grep`
+
+if [[ -n "$PS_OUT" ]]; then
+        PID=${PS_OUT%% webapps*}
+        kill -SIGTERM "$PID"
+fi

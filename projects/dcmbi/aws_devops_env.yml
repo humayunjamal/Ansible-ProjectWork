@@ -1,0 +1,44 @@
+---
+aws_vpc: vpc-f08b9b92
+aws_ami: ami-fadfd48e
+aws_size: m1.large
+aws_web_subnet_1a: subnet-50477c24
+web_subnet_1a: 10.50.80.0/25
+aws_web_subnet_1b: subnet-f495ceb2
+web_subnet_1b: 10.50.80.128/25
+aws_app_subnet_1a: subnet-53477c27
+app_subnet_1a: 10.50.81.0/24
+aws_app_subnet_1b: subnet-f695ceb0
+app_subnet_1b: 10.50.82.0/24
+aws_db_subnet_1a: subnet-5c477c28
+db_subnet_1a: 10.50.83.0/24
+aws_db_subnet_1b: subnet-f795ceb1
+db_subnet_1b: 10.50.84.0/24
+aws_dns_zone: oeuw1.api.bskyb.com
+aws_region: eu-west-1
+env_prefix: oeuw1
+aws_key_name: "{{ env_prefix }}"
+base_group: sg-792dcb1c
+
+#environment number
+env_num: 1
+
+#number of instances per availability zone
+web_count_1b: 0
+web_count_1a: 0
+app_count_1a: 0
+app_count_1b: 0
+db_count_1a: 2
+db_count_1b: 1
+
+#inital value of counter for dns records
+app_count: 1
+web_count: 1
+db_count: 1
+
+#tiers to create
+db_serv: true
+app_serv: false
+web_serv: false
+
+

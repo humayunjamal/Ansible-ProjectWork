@@ -1,0 +1,6 @@
+---
+redis_peers: "{{ db_peers }}"
+redis_version: "{{ db_version }}"
+redis_downloadurl: "http://www.hazelcast.org/files/hazelcast-{{ hazelcast_version }}.zip"
+redis_port: "{{ db_port }}"
+redis_user: "{{ db_user }}"

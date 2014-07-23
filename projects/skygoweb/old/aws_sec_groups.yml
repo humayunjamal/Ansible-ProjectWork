@@ -1,0 +1,30 @@
+---
+- name: Create security group for web tier
+  ec2_group:
+    name: "{{ aws.env.name }}-SG{{project_prefix}}Web"
+    description: Access to Sky Go Web Servers
+    vpc_id: "{{ aws.vpc }}"
+    region: "{{ aws.region }}"
+    rules:
+    - proto: tcp
+      from_port: 80
+      to_port: 80
+      cidr_ip: 10.0.0.0/8
+    - proto: tcp
+      from_port: 443
+      to_port: 443
+      cidr_ip: 10.0.0.0/8
+  register: ec2websg
+  
+- name: Create security group for DB tier
+  ec2_group:
+    name: "{{ aws.env.name }}-SG{{project_prefix}}DB"
+    description: Access to Sky Go DB Servers
+    vpc_id: "{{ aws.vpc }}"
+    region: "{{ aws.region }}"
+    rules:
+    - proto: tcp
+      from_port: "{{ aws.db.port }}"
+      to_port: "{{ aws.db.port }}"
+      group_id: "{{ ec2websg.group_id }}"
+  register: ec2dbsg

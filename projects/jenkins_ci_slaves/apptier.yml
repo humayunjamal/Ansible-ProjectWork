@@ -1,0 +1,12 @@
+---
+- hosts: invdata
+  gather_facts: False
+
+- hosts: apptier
+  sudo: yes
+  tags: jenkins_ci_slaves
+  roles:
+    - apt_internal
+    - ntp_client
+    - oracle_jdk7
+    - jenkins_slave

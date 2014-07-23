@@ -1,0 +1,14 @@
+project_prefix: logmanagement
+
+aws_ami: ami-fadfd48e
+aws_eki: aki-71665e05
+aws_size: m1.large
+
+base_dir: /var/sky
+base_log_dir: "{{ base_dir }}/log"
+base_pid_dir: "{{ base_dir }}/run"
+
+graphite_host: graphite
+graphite_port: 2003
+
+keys_path: /root/.keys

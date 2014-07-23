@@ -1,0 +1,27 @@
+---
+#common requirements for all nodes
+- name: Create hosts file entry for host
+  template: src=hosts.j2 dest=/etc/hosts mode=0644 owner=root
+  
+- name: Create keystore dir
+  file: path={{keys_path}} mode=0700 state=directory
+
+- name: Put the key in place for dns updates
+  copy: src=Kinternal.+165+53409.private dest={{keys_path}}/Kinternal.+165+53409.private mode=0600
+
+- name: Put the key in place for dns updates
+  copy: src=Kinternal.+165+53409.key dest={{keys_path}}/Kinternal.+165+53409.key mode=0600
+  
+- name: Put the dhclient hooks in for dns updates
+  template: src=update_dns.j2 dest=/usr/local/bin/update_dns.sh mode=0755
+  
+- name: Add script to post-up in network interfaces
+  lineinfile: dest=/etc/network/interfaces insertafter='^iface eth0' line="    post-up /usr/local/bin/update_dns.sh" state=present
+  
+- name: Run the update_dns script to get things started in dns.
+  command: /usr/local/bin/update_dns.sh
+  register: dns_done
+
+#- name: Create hosts file for name resolution
+#    template: src=hosts.j2 dest=/etc/hosts
+#    when: dns_done|failed

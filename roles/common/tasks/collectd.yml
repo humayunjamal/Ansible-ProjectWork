@@ -1,0 +1,10 @@
+---
+- name: Install collectd
+  apt: pkg=collectd state=installed
+  
+- name: Copy collectd config
+  template: src=collectd.conf.j2 dest=/etc/collectd/collectd.conf
+  
+- name: Restart collectd
+  service: name=collectd state=restarted enabled=yes
+

@@ -1,0 +1,15 @@
+---
+# This Playbook deploys a 3-node cassandra cluster
+
+- hosts: invdata
+  gather_facts: True
+
+- hosts: dbtier
+  sudo: yes
+  vars_files:
+   - dbtier_vars.yml
+  roles:
+    - common
+    - java
+    - cassandra
+

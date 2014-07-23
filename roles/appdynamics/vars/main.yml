@@ -1,0 +1,20 @@
+---
+appdynamics_base_dir: /home/appdynamics/bin
+appdynamics_user: "appdynamics"
+appdynamics_group: "appdynamics"
+appdynamics_package: "AppDynamicsController.zip"
+appdynamics_controller_install_dir: /apps/AppDynamics/Controller 
+appdynamics_controller_appserver_port: 8090
+appdynamics_controller_database_port: 3388
+appdynamics_controller_admin_port: 4848
+appdynamics_controller_jms_port: 7676
+appdynamics_controller_iiop_port: 3700
+appdynamics_controller_ssl_port: 8181
+appdynamics_controller_home: "/home/{{ appdynamics_user }}"
+appdynamics_controller_tenancy_mode: 1
+appdynamics_controller_admin_user: "admin"
+appdynamics_controller_admin_password: "admin321"
+appdynamics_controller_install_profile: 1
+appdynamics_controller_ha_mode: 1
+appdynamics_controller_version: "3.7.14" 
+appdynamics_controller_local_pkg_store: /tmp/AppDynamicsController.zip

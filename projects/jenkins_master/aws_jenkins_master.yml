@@ -1,0 +1,80 @@
+---
+- hosts: local
+  connection: local
+  gather_facts: False
+  tags: aws
+  vars_files:
+    - aws_vars.yml
+  tasks:
+    - name: Create security group for the Jenkins master
+      local_action:
+        module: ec2_group
+        name: "{{ aws.master.sg }}"
+        description: Access to the Jenkins master
+        vpc_id: "{{ aws.master.vpc }}"
+        region: "{{ aws.region }}"
+        rules:
+        - proto: tcp
+          from_port: 22
+          to_port: 22
+          cidr_ip: 10.50.135.20/32
+        - proto: tcp
+          from_port: 22
+          to_port: 22
+          cidr_ip: 10.50.136.20/32
+        - proto: tcp
+          from_port: 443
+          to_port: 443
+          cidr_ip: 10.0.0.0/8
+
+    - name: Create the instance for the Jenkins master
+      local_action:
+        module: ec2
+        keypair: "{{ aws.master.key }}"
+        group: "{{ aws.master.sg }}"
+        instance_type: "{{ aws.master.instance_type }}"
+        image: "{{ aws.master.ami }}"
+        region: "{{ aws.region }}"
+        vpc_subnet_id: "{{ aws.master.subnet }}"
+        private_ip: "{{ aws.master.private_ip }}"
+        wait: yes
+        count_tag:
+          Name: "{{ aws.master.name }}"
+        exact_count: 1
+        instance_tags:
+          Name: "{{ aws.master.name }}"
+          env: "{{ aws.env }}"
+          role: jenkins-master
+      register: ec2_jenkins_master
+
+    - name: Associate an elastic IP to the Jenkins master
+      local_action:
+        module: ec2_eip
+        region: "{{ aws.region }}"
+        in_vpc: yes
+        instance_id: "{{ item.id }}"
+        public_ip: "{{ aws.master.eip }}"
+      with_items: ec2_jenkins_master.tagged_instances
+
+    - name: Create an EBS volume to store /var/lib/jenkins
+      local_action:
+        module: ec2_vol
+        region: "{{ aws.region }}"
+        instance: "{{ item.id }}"
+        volume_size: 500
+        device_name: /dev/xvdh
+      with_items: ec2_jenkins_master.tagged_instances
+      ignore_errors: yes
+
+    - name: Create an EBS volume to store the backups on the jenkins master
+      local_action:
+        module: ec2_vol
+        region: "{{ aws.region }}"
+        instance: "{{ item.id }}"
+        volume_size: 5
+        device_name: /dev/xvdf
+      with_items: ec2_jenkins_master.tagged_instances
+      ignore_errors: yes
+
+    - name: Wait for the EC2 instance to be accesible via SSH
+      pause: seconds=120

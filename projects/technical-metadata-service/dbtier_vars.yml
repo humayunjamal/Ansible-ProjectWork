@@ -1,0 +1,4 @@
+---
+java_type: oracle_gz
+cluster_name: "tms_cluster"
+cassandra_seeds: ["technical-metadata-servicedb11.u1euw1.api.bskyb.com", "technical-metadata-servicedb12.u1euw1.api.bskyb.com"]

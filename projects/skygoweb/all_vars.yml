@@ -1,0 +1,14 @@
+---
+base_dir: /var/sky
+base_log_dir: "{{ base_dir }}/log"
+base_pid_dir: "{{ base_dir }}/run"
+tmp_dir: "{{ base_dir}}/tmp"
+env: "dev"
+
+app_name: skygoweb
+app_user: skygoweb
+app_group: apps
+app_home: "{{ base_dir }}/skygoweb"
+
+site_name: "skygoweb.api.sky.com"
+

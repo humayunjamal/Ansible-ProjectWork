@@ -1,0 +1,54 @@
+---
+
+- name: Create elasticsearch group
+  user: name={{ elasticsearch_group }}
+
+- name: Create elasticsearch user
+  user: name={{ elasticsearch_user }} group={{ elasticsearch_group }} home={{ elasticsearch_home }} shell=/bin/bash
+
+- name: Check if ES tar ball is already downloaded
+  command: /usr/bin/test -e /tmp/{{ elasticsearch_tarball }}
+  register: tarball_present
+  ignore_errors: True
+
+- name: Download Elasticsearch tarball
+  command: wget {{ elasticsearch_download_url }} chdir=/tmp creates={{ elasticsearch_tarball }}
+  environment: proxy_env
+  when: tarball_present|failed
+
+- name: Create apps and data directory
+  file: path={{ item }} owner={{ elasticsearch_user }} group={{ elasticsearch_group }}  state=directory
+  with_items:
+   - "{{ elasticsearch_data_dir }}"
+   - "{{ elasticsearch_home }}"
+   - "{{ elasticsearch_logs_dir }}"
+
+- name: Extract ES from tarball
+  command: tar xzf /tmp/{{ elasticsearch_tarball }} -C elasticsearch --strip-components=1 creates=/apps/elasticsearch/bin/elasticsearch chdir=/apps 
+
+- name: Change ownership 
+  command: chown -R elasticsearch /apps/elasticsearch
+
+- name: Add conf file  from template
+  template: src=elasticsearch_conf.j2 dest=/apps/elasticsearch/config/elasticsearch.yml owner={{ elasticsearch_user }} group={{ elasticsearch_group }} mode=0644
+
+- name: Add init file  from template
+  template: src=elasticsearch_init.j2 dest=/etc/init/elasticsearch.conf owner=root group=root mode=0644
+
+- name: Stop elasticsearch Service
+  service: name=elasticsearch enabled=yes state=stopped
+
+- name: Start elasticsearch Service
+  service: name=elasticsearch enabled=yes state=restarted
+
+#- name: Get instance id
+#  command: curl http://169.254.169.254/latest/meta-data/instance-id
+#  register: instance_id
+
+#- name: Add instance to the Elastic Search ELB 
+#  ec2_elb: 
+#   args: 
+#    region: "{{ aws_region }}"
+#    instance_id: "{{ instance_id.stdout }}"
+#    ec2_elbs: "{{ aws_esearch_LB }}"
+#    state: 'present'

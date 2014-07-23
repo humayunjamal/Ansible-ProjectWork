@@ -1,0 +1,22 @@
+---
+java_type: oracle_gz
+java_version: jdk1.7.0_45
+java_gz_file:  jdk-7u45-linux-x64.tar.gz
+java_base_dir: /usr/lib/jvm
+java_url: "https://s3-eu-west-1.amazonaws.com/stratos-binary-artifacts/mirrors/jdk/7u45/{{ java_gz_file }}"
+java_path: /usr/lib/jvm/{{ java_version }}
+app_user: crmapi
+tomcat_user: tomcat7
+tomcat_port: 8080
+tomcat_xmx: 1024M
+java_opts: "-Denvironment={{ env }}-{{ env_prefix }} -Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true  -Dcassandra.strategyName=NetworkTopologyStrategy -Dcassandra.localdatacenter=50 -Dcassandra.networkReplicationConfig=50:3"
+tomcat_deploy_dir: /var/lib/tomcat7/webapps
+processes:
+ - { name: "java", pattern: "tomcat" }
+archiva_auth: 'jenkins:jenkins1'
+major_ver: 1.0
+minor_ver: 80
+binary_artifact_url: "https://{{archiva_auth}}@portal.api.bskyb.com/archiva/repository/sky-releases/com/bskyb/mobile/crm/crm-service/{{ major_ver }}.{{ minor_ver }}/crm-service-{{ major_ver }}.{{ minor_ver }}.war"
+app_name: crm
+use_sec_eph: no
+

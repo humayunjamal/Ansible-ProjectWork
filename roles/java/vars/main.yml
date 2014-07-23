@@ -1,0 +1,11 @@
+---
+java_type: oracle_gz
+java_version: jdk1.7.0_45
+java_gz_file:  jdk-7u45-linux-x64.tar.gz
+java_base_dir: /usr/lib/jvm
+java_url: "https://s3-eu-west-1.amazonaws.com/stratos-binary-artifacts/mirrors/jdk/7u45/{{ java_gz_file }}"
+java_path: /usr/lib/jvm/{{ java_version }}
+
+proxy_env:
+  http_proxy: http://proxy:80/
+  https_proxy: http://proxy:80/

@@ -1,0 +1,49 @@
+---
+#Tasks to deploy appdynamics
+# prereqs:
+# disk partition available for data - aws secure ephemeral script
+- set_fact:
+    aws_access_key: "{{ lookup('env','AWS_ACCESS_KEY') }}"
+    aws_secret_key: "{{ lookup('env','AWS_SECRET_KEY') }}"
+- debug: var=aws_access_key
+- debug: var=aws_secret_key
+
+- include: user.yml
+
+- include: package.yml
+
+- name: Copy /etc/security/limits.d/appdynamics.conf conf for appdynamics
+  template: src=etc-security-limits-appdynamics.conf.j2 dest=/etc/security/limits.d/appdynamics.conf owner=root mode=0755
+
+- name: Install package libaio1
+  apt: pkg=libaio1 state=installed
+
+- name: Install package expect
+  apt: pkg=expect state=installed
+
+- name: Install package unzip
+  apt: pkg=unzip state=installed
+
+- name: Create appdynamics dirs
+  file: path={{ appdynamics_base_dir }} state=directory owner={{ appdynamics_user }} group={{ appdynamics_group }} mode=0755
+
+- name: Copy install_upgrade script for appdynamics
+  template: src=install_upgrade.exp.j2 dest=/home/{{ appdynamics_user }}/bin/install_upgrade.exp owner={{ appdynamics_user }} group={{ appdynamics_group }} mode=0500
+
+- name: Extract Controller
+  command: unzip {{ appdynamics_controller_local_pkg_store }} chdir=/tmp creates=/tmp/controller_64bit_linux_{{ appdynamics_controller_version }}.sh
+  command: mv /tmp/controller_64bit_linux_{{ appdynamics_controller_version }}.sh /{{ appdynamics_controller_home }}/bin/
+  command: chown -R {{ appdynamics_user }}:{{ appdynamics_group }} /{{ appdynamics_controller_home }}/bin/
+  command: chmod +x /{{ appdynamics_controller_home }}/bin/controller_64bit_linux_{{ appdynamics_controller_version }}.sh
+
+- name: Execute install_upgrade script
+  command: /home/{{ appdynamics_user }}/bin/install_upgrade.exp 2>&1 | tee /tmp/expect_install_upgrade.log chdir=/home/{{ appdynamics_user }}/bin/
+
+- name: Cleanup install files from /home/appdynamics
+  command: find . -type f ( -name 'controller*sh' ! -name 'controller_64bit_linux_{{ appdynamics_controller_version }}.sh' ) -delete
+
+- name: Update permissions on log & install directories
+  command: chown -R {{ appdynamics_user }}:{{ appdynamics_group }} {{ appdynamics_controller_install_dir }}
+
+- name: Create license file
+  template: src=controller-license.lic.j2 dest={{ appdynamics_controller_install_dir }}/license.lic owner={{ appdynamics_user }} group={{ appdynamics_group }} mode=0444

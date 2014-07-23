@@ -1,0 +1,8 @@
+---
+
+rsyslog_remote_dir: /mnt/logs
+rsyslog_remote_host_path: "{{ rsyslog_remote_dir }}/%FROMHOST%/%$YEAR%-%$MONTH%-%$DAY%_syslog.log"
+rsyslog_logstash_host: "logstash"
+rsyslog_logstash_port: 5544
+rsyslog_incoming_port: 514
+

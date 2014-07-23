@@ -1,0 +1,45 @@
+---
+
+- name: Check if redis tar file is already downloaded
+  command: /usr/bin/test -e /tmp/redis-{{ redis_version }}.tar.gz
+  register: tarball_present
+  ignore_errors: True
+
+- name: Get redis jar from s3
+  command: wget {{ redis_download_url }} chdir=/tmp
+  environment: proxy_env
+  when: tarball_present|failed
+
+- name: Create the apps directory
+  file: path={{ logstash_redis_data_dir }} state=directory owner={{ logstash_user }} group={{ logstash_group }}
+
+- name: Extract elasticsearch
+  command: tar xzf /tmp/redis-{{ redis_version }}.tar.gz -C {{ logstash_redis_data_dir }} --strip-components=1 
+  register: extraction_done
+
+- name: Compile redis 
+  command: chown -R {{ logstash_user }}:{{ appdynamics_group }} {{ logstash_redis_data_dir }}
+  command: make chdir={{ logstash_redis_data_dir }}
+  when: extraction_done|success 
+
+- name: Install redis conf from template
+  template: src=redis_conf.j2 dest={{ logstash_redis_data_dir }}/redis.conf owner={{ logstash_user }} group={{ logstash_group }} mode=0644
+
+- name: Install crontab for rewriting the append only file
+  template: src=redis_cron.j2 dest=/etc/cron.d/redis owner=root group=root mode=0644
+
+- name: Create the log directory
+  file: path=/var/log/redis state=directory owner={{ logstash_user }} group=adm
+
+- name: Create and Make sure log file exists
+  file: path=/var/log/redis/redis-server.log owner={{ logstash_user }} group=adm state=touch
+
+- name: Add init file
+  template: src=redis-server_init.j2 dest=/etc/init/redis-server.conf owner=root group=root mode=0644
+
+- name: Start Redis-Server Service
+  service: name=redis-server enabled=yes state=started
+
+
+
+

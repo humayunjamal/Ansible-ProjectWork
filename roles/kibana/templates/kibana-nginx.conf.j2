@@ -1,0 +1,37 @@
+server {
+  listen               {{ ansible_default_ipv4["address"] }}:{{ nginx_listen_port }};
+  
+  server_name           {{ kibana_host_name }}  {{ ansible_default_ipv4["address"] }};
+  access_log            /var/log/nginx/{{ kibana_host_name }}.access.log;
+
+  location / {
+    root  {{ kibana_installdir }}/current;
+    index  index.html  index.htm; 
+  }
+
+  location ~ ^/_nodes$ {
+    proxy_pass http://{{ kibana_es_server }}:{{ kibana_es_port }};
+    proxy_read_timeout 90;
+  }
+  location ~ ^/_aliases$ {
+    proxy_pass http://{{ kibana_es_server }}:{{ kibana_es_port }};
+    proxy_read_timeout 90;
+  }
+  location ~ ^/.*/_search$ {
+    proxy_pass http://{{ kibana_es_server }}:{{ kibana_es_port }};
+    proxy_read_timeout 90;
+  }
+  location ~ ^/.*/_mapping$ {
+    proxy_pass http://{{ kibana_es_server }}:{{ kibana_es_port }};
+    proxy_read_timeout 90;
+  }
+  # Password protected end points
+  location ~ ^/kibana-int/dashboard/.*$ {
+    proxy_pass http://{{ kibana_es_server }}:{{ kibana_es_port }};
+    proxy_read_timeout 90;
+  }
+  location ~ ^/kibana-int/temp.*$ {
+    proxy_pass http://{{ kibana_es_server }}:{{ kibana_es_port }};
+    proxy_read_timeout 90;
+  }
+}

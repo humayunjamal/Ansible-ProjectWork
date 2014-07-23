@@ -1,0 +1,5 @@
+[local]
+localhost
+
+[jenkins-master]
+jenkins.sseuw1.api.bskyb.com

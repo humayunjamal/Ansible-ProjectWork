@@ -1,0 +1,10 @@
+---
+- hosts: jenkins-slaves-{{ env }}
+  gather_facts: False
+  sudo: yes
+  tags: jenkins_slaves
+  roles:
+    - apt_internal
+    - ntp_client
+    - oracle_jdk7
+    - jenkins_slave

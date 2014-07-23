@@ -1,0 +1,14 @@
+---
+
+- hosts: invdata
+  gather_facts: True
+
+- hosts: webtier
+  sudo: yes
+  vars_files:
+    - all_vars.yml
+    - roles/webtier/vars.yml
+  roles:
+    - base
+    - common
+    - webtier

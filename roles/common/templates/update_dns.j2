@@ -1,0 +1,34 @@
+#!/bin/bash
+
+#setup environment for update
+#first create secure tmpfs
+if [ `df -k | grep tmpfs | grep '/tmp/secure$' | wc -l` = 0 ]
+then
+  test -d /tmp/secure || mkdir -p /tmp/secure
+  mount -t tmpfs -o size=2M tmpfs /tmp/secure/
+fi
+
+#Now fetch key for dns update
+cp {{keys_path}}/Kinternal* /tmp/secure/
+chmod 0600 /tmp/secure/Kinternal*
+
+# Update all internal nameservers, set the record to point to the configured IP (which is usually my IP)
+
+ip=$(ifconfig eth0 | grep 'inet a' | awk '{print $2}' | cut -d ':' -f 2)
+record={{ansible_hostname}}.internal
+
+nameservers=`sudo cat /etc/resolv.conf | grep nameserver | sed "s/nameserver //"`
+primary_ns=`echo $nameservers | awk '{print $1}'`
+
+cat >/tmp/secure/dns_update.txt <<EOF 
+server $primary_ns
+zone internal
+update delete $record
+update add $record 1 A $ip
+send
+EOF
+
+# 3. send the update
+cd /tmp/secure/ && nsupdate -k Kinternal.+165+53409.private dns_update.txt
+cd /tmp && umount /tmp/secure
+exit 0

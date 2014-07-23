@@ -1,0 +1,13 @@
+---
+- hosts: all
+  gather_facts: true
+  connection: local
+  pre_tasks:
+   - include: projects/{{ project_prefix }}/aws_sec_groups.yml
+  sudo: yes
+  vars:
+    proxy_env:
+      http_proxy: http://proxy:80
+      https_proxy: http://proxy:80
+  roles:
+    - kibana

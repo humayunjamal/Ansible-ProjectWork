@@ -1,0 +1,80 @@
+---
+- hosts: local
+  connection: local
+  gather_facts: False
+  tags: aws
+  vars_files:
+    - aws_vars.yml
+  tasks:
+    - name: Create security group for the internal repo
+      local_action:
+        module: ec2_group
+        name: "{{ sg }}"
+        description: Access to the internal repo
+        vpc_id: "{{ vpc }}"
+        region: "{{ region }}"
+        rules:
+        - proto: tcp
+          from_port: 80
+          to_port: 80
+          cidr_ip: 10.0.0.0/8
+        - proto: tcp
+          from_port: 443
+          to_port: 443
+          cidr_ip: 10.0.0.0/8
+        - proto: tcp
+          from_port: 22
+          to_port: 22
+          cidr_ip: 0.0.0.0/0
+
+    - name: Create the instance for the internal repo
+      local_action:
+        module: ec2
+        keypair: "{{ key }}"
+        group: "{{ sg }}"
+        instance_type: "{{ instance_type }}"
+        image: "{{ ami }}"
+        region: "{{ region }}"
+        vpc_subnet_id: "{{ subnet }}"
+        private_ip: "{{ private_ip }}"
+        wait: yes
+        count_tag:
+          Name: "{{ name }}"
+        exact_count: 1
+        instance_tags:
+          Name: "{{ name }}"
+          env: "{{ aws_env }}"
+          role: internal-repo
+      register: ec2_internal_repo
+
+    - name: Associate an elastic IP to the internal repo
+      local_action:
+        module: ec2_eip
+        region: "{{ region }}"
+        in_vpc: yes
+        instance_id: "{{ item.id }}"
+        public_ip: "{{ eip }}"
+      with_items: ec2_internal_repo.tagged_instances
+
+    - name: Create an EBS volume to store the nexus repo
+      local_action:
+        module: ec2_vol
+        region: "{{ region }}"
+        instance: "{{ item.id }}"
+        volume_size: 30
+        device_name: /dev/xvdf
+      with_items: ec2_internal_repo.tagged_instances
+      ignore_errors: yes
+
+    - name: Create an EBS volume to store the internal deb repo
+      local_action:
+        module: ec2_vol
+        region: "{{ region }}"
+        instance: "{{ item.id }}"
+        volume_size: 500
+        device_name: /dev/xvdg
+      with_items: ec2_internal_repo.tagged_instances
+      ignore_errors: yes
+
+    - name: Wait for the EC2 instance to be accesible via SSH
+      pause: seconds=120

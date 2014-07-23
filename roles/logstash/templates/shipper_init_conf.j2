@@ -1,0 +1,23 @@
+# logstash - agent instance
+#
+
+description     "logstash agent instance"
+
+start on virtual-filesystems
+stop on runlevel [06]
+
+# Respawn it if the process exits
+respawn
+respawn limit 5 30
+limit nofile 65550 65550
+expect fork
+
+# You need to chdir somewhere writable because logstash needs to unpack a few
+# temporary files on startup.
+chdir {{ logstash_home }}
+
+script
+
+  # This runs logstash agent as the 'logstash' user
+  su -s /bin/sh -c 'exec "$0" "$@"' logstash -- /usr/bin/java -jar logstash.jar agent -f {{ logstash_home }}/logstash_shipper.conf --log {{ logstash_log_dir }}/logstash.log &
+end script

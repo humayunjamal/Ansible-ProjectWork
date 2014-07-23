@@ -1,0 +1,5 @@
+---
+s3cmd_user: 'root'
+s3cmd_home: '/root/'
+s3cmd_version: 1.5.0-beta1
+s3cmd_archive: s3cmd-{{ s3cmd_version }}.tar.gz

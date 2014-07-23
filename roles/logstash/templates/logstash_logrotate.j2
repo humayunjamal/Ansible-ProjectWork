@@ -1,0 +1,8 @@
+{{ logstash_log_dir }}/logstash*.log {
+        daily
+        missingok
+        copytruncate
+        rotate 12
+        compress
+        notifempty
+}

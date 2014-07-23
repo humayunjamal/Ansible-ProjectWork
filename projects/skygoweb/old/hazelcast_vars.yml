@@ -1,0 +1,26 @@
+---
+hazelcast_port: "{{ db_port }}"
+hazelcast_peers: "{{ db_peers }}"
+hazelcast_wan_enabled: "false"
+hazelcast_wan_target_endpoints: ""
+hazelcast_mgmt_center_enabled: "{{ has_db_manager }}"
+hazelcast_mgmt_center_url: "{{ db_manager_url }}"
+
+hazelcast_xms: "256m"
+hazelcast_xmx: "256m"
+hazelcast_log_file: "{{ db_log_file }}"
+hazelcast_version: "{{ db_version }}"
+hazelcast_downloadurl: "http://www.hazelcast.org/files/hazelcast-{{ hazelcast_version }}.zip"
+hazelcast_install_base_dir: "{{ db_install_base }}"
+hazelcast_network_interface_networks: "{{ db_network }}"
+hazelcast_unicast_port: "{{ db_port }}"
+
+hazelcast_multicast_port: "54328"
+hazelcast_multicast_group: "skygoweb"
+
+hazelcast_user: "{{ db_user }}"
+hazelcast_group_name: "skygoweb-{{ env }}"
+hazelcast_group_password: "skygoweb-{{ env }}"
+hazelcast_multicast_enable: false
+hazelcast_unicast_enable: true
+

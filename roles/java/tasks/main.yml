@@ -1,0 +1,65 @@
+---
+# Playbook for app server preparation - does not include app install
+
+- name: reate java base dir
+  file: path={{ java_base_dir }} state=directory mode=0755
+
+- name: Add the webupd8 APT repository
+  apt_repository: repo="deb http://ppa.launchpad.net/webupd8team/java/ubuntu precise main" state=present
+  when: "'{{java_type}}' ==  'oracle'"
+  
+- name: Add the webupd8 APT repository key
+  apt_key: data="{{ lookup('file', 'webupd8.key.asc') }}" state=present
+  when: "'{{java_type}}' ==  'oracle'"
+
+- name: Automatically select the Oracle License
+  shell: echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
+  when: "'{{java_type}}' ==  'oracle'"
+    
+- name: Install openjdk java
+  apt: pkg={{java_version}} state=installed
+  when: "'{{java_type}}' ==  'openjdk'"
+
+- name: Install Oracle java
+  apt: pkg={{java_version}} update-cache=yes state=latest
+  when: "'{{java_type}}' ==  'oracle'"
+  
+- name: Download java from S3
+  command: wget {{ java_url }} chdir={{ java_base_dir }} creates={{ java_gz_file }}
+  environment: proxy_env
+  register: got_java
+  when: "'{{java_type}}' == 'oracle_gz'"
+  
+- name: Install java from gz file
+  command: tar xzf {{ java_gz_file }} chdir={{ java_base_dir }}
+  when: "'{{java_type}}' == 'oracle_gz' and got_java|success"
+  register: java_installed
+  
+- name: Update /etc/profile with java settings
+  template: src=javapath.sh.j2 dest=/etc/profile.d/javapath.sh
+  when: java_installed|success
+
+- name: Update ubuntu alternatives for java
+  command: update-alternatives --install "/usr/bin/java" "java" "{{ java_path }}/bin/java" 1
+  when: java_installed|success
+  
+- name: Update default java path
+  command: update-alternatives --set java "{{ java_path }}/bin/java"
+  when: java_installed|success
+  
+- name: Update ubuntu alternatives for javac
+  command: update-alternatives --install "/usr/bin/javac" "javac" "{{ java_path }}/bin/javac" 1
+  when: java_installed|success
+  
+- name: Update default javac path
+  command: update-alternatives --set javac "{{ java_path }}/bin/javac"
+  when: java_installed|success
+
+- name: Create symlink for java
+  file: src={{ java_base_dir }}/{{ java_version }} dest={{ java_base_dir }}/default-java state=link
+  when: java_installed|success
+  
+- name: Create symlink for java
+  file: src=/usr/lib/jvm/java-7-oracle dest=/usr/lib/jvm/default-java state=link
+  when: "'{{java_type}}' ==  'oracle' and '7' in '{{java_version}}'"
+  

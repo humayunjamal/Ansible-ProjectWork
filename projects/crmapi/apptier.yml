@@ -1,0 +1,16 @@
+---
+# This Playbook configures the app tier and deploys the vacm api and ui 
+
+- hosts: invdata
+  gather_facts: False
+
+- hosts: apptier
+  sudo: yes
+  vars_files:
+    - ../../base_vars.yml
+    - apptier_vars.yml
+  roles:
+    - common
+    - java
+    - tomcat7
+

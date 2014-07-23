@@ -1,0 +1,38 @@
+[all:vars]
+env=devops
+make_db=true
+
+[webtier]
+vacmweb11.oeuw1.api.bskyb.com  host_ip=10.50.80.61 instance_id=i-5e73741e aws_name=ip-10-50-80-61
+vacmweb12.oeuw1.api.bskyb.com  host_ip=10.50.80.62 instance_id=i-5f73741f aws_name=ip-10-50-80-62
+vacmweb13.oeuw1.api.bskyb.com  host_ip=10.50.80.198 instance_id=i-a4b858e6 aws_name=ip-10-50-80-198
+
+
+[apptier]
+vacmapp11.oeuw1.api.bskyb.com  host_ip=10.50.81.30 instance_id=i-b67572f6 aws_name=ip-10-50-81-30
+vacmapp12.oeuw1.api.bskyb.com  host_ip=10.50.81.29 instance_id=i-b77572f7 aws_name=ip-10-50-81-29
+vacmapp13.oeuw1.api.bskyb.com  host_ip=10.50.82.6 instance_id=i-fdb959bf aws_name=ip-10-50-82-6
+
+[dbtier]
+vacmdb1.oeuw1.api.bskyb.com  host_ip=10.50.83.167 instance_id=i-a07374e0 aws_name=ip-10-50-83-167
+vacmdb2.oeuw1.api.bskyb.com  host_ip=10.50.83.168 instance_id=i-af7374ef aws_name=ip-10-50-83-168
+vacmdb3.oeuw1.api.bskyb.com  host_ip=10.50.84.166 instance_id=i-6db5552f aws_name=ip-10-50-84-166
+
+[repset]
+vacmdb2.oeuw1.api.bskyb.com
+vacmdb3.oeuw1.api.bskyb.com
+
+[devops:children]
+dbtier
+apptier
+webtier
+
+[invdata]
+vacmweb11.oeuw1.api.bskyb.com
+vacmweb12.oeuw1.api.bskyb.com
+vacmweb13.oeuw1.api.bskyb.com
+vacmapp11.oeuw1.api.bskyb.com
+vacmapp12.oeuw1.api.bskyb.com
+vacmdb1.oeuw1.api.bskyb.com
+vacmdb2.oeuw1.api.bskyb.com
+vacmdb3.oeuw1.api.bskyb.com

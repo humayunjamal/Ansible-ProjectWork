@@ -1,0 +1,20 @@
+{{ cassandra_logs_dir }}/*.log {
+        daily
+        rotate 14
+        compress
+        delaycompress
+        missingok
+        copytruncate
+        notifempty
+        create 644 cassandra cassandra
+        postrotate
+                # need to reset counters, else rsyslog won't ship after logrotate
+                sleep 5
+                service rsyslog stop
+                rm /var/spool/rsyslog/cassandra_system
+                rm /var/spool/rsyslog/cassandra_backup
+                sleep 5
+                service rsyslog start
+        endscript
+        
+}

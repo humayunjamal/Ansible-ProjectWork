@@ -1,0 +1,31 @@
+---
+#This requires further tightening once the backup i s fully implemented.
+- name: Create security group for db tier
+  ec2_group:
+    name: "{{ env_prefix }}-SG{{project_prefix}}Db"
+    description: Access to CRM API Web Servers
+    vpc_id: "{{ aws_vpc }}"
+    region: "{{ aws_region }}"
+    rules:
+    - proto: tcp
+      from_port: 9160
+      to_port: 9160
+      cidr_ip: 10.0.0.0/8
+    - proto: tcp
+      from_port: 7000
+      to_port: 7000
+      cidr_ip: 10.0.0.0/8
+    - proto: tcp
+      from_port: 9042
+      to_port: 9042
+      cidr_ip: 10.0.0.0/8
+    - proto: tcp
+      from_port: 7199
+      to_port: 7199
+      cidr_ip: 10.0.0.0/8
+    - proto: tcp
+      from_port: 22
+      to_port: 22
+      cidr_ip: 10.0.0.0/8
+  register: ec2websg
+  when: db_serv

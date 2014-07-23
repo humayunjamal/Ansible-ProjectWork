@@ -1,0 +1,74 @@
+---
+#Tasks to deploy cassandra cluster
+# prereqs: 
+# java installed on node
+# disk partition available for data - aws secure ephemeral script
+# install cassandra by downloading the archive from s3
+# add init script
+# apply template for cassandra config (cassandra.yaml)
+# start cassandra
+# check status of cluster
+
+- name: Create cassandra user
+  user: name={{ cassandra_user }} createhome=yes shell=/bin/bash
+
+- name: Add cassandra bin to PATH
+  lineinfile: dest={{ cassandra_home }}/.profile line='export PATH={{ cassandra_bin_dir }}:$PATH'
+  
+- name: Create cassandra base dirs
+  file: path={{ cassandra_base_dir }} state=directory owner=root mode=0755
+
+- name: Get cassandra tarball from s3
+  s3: bucket=stratos-binary-artifacts object=/mirrors/{{ cassandra_tarball }} dest={{ cassandra_base_dir }}/{{ cassandra_tarball }} mode=get aws_access_key={{ lookup('env','AWS_ACCESS_KEY') }} aws_secret_key={{ lookup('env','AWS_SECRET_KEY') }}
+#  s3: bucket=stratos-binary-artifacts object=/mirrors/{{ cassandra_archive }} dest=/tmp/cassandra.tgz mode=get
+  register: cass_down
+  
+- name: Extract contents of cassandra archive to {{ cassandra_base_dir }}
+  command: tar xzf {{ cassandra_base_dir }}/{{ cassandra_tarball }} -C {{ cassandra_base_dir }}
+  when: cass_down|success
+  
+- name: Change ownsership of cassandra source directory
+  command: chown -R {{ cassandra_user }}. {{ cassandra_base_dir }}/apache-cassandra-{{ cassandra_version }}
+  
+- name: Create link to cassandra dir
+  file: src={{ cassandra_base_dir }}/apache-cassandra-{{ cassandra_version }} dest={{ cassandra_base_dir }}/cassandra state=link
+
+#- name: Create base dirs
+#  file: path={{ base_data_dir }} state=directory owner=root mode=0755
+
+- name: Create cassandra directory structure
+  file: path={{ item }} state=directory owner={{ cassandra_user }} group={{ cassandra_user }} mode=0755
+  with_items:
+    - "{{ cassandra_data_dir }}"
+    - "{{ cassandra_commitlog_dir }}"
+    - "{{ cassandra_saved_caches_dir }}"
+    - "{{ cassandra_logs_dir }}"
+  
+- name: Add cassandra config file
+  template: src=cassandra.yaml.j2 dest={{ cassandra_config_dir }}/cassandra.yaml owner={{ cassandra_user }} mode=0640
+  
+- name: Copy init script for cassandra
+  template: src=cassandra.init.j2 dest=/etc/init.d/cassandra owner=root mode=0755
+  
+- name: Copy cassandra env script
+  template: src=cassandra_env.sh.j2 dest={{ cassandra_config_dir }}/cassandra_env.sh
+  
+- name: Copy log4j properties file
+  template: src=log4j-server.properties.j2 dest={{ cassandra_config_dir }}/log4j-server.properties
+
+- name: Install correct jna version
+  get_url: url=http://repo1.maven.org/maven2/net/java/dev/jna/jna/{{ jna_version }}/jna-{{ jna_version }}.jar dest={{ cassandra_lib_dir }}/jna.jar use_proxy=yes
+  
+- name: Add cassandra syslog configuration
+  template: src=cassandra.syslog.j2 dest=/etc/rsyslog.d/cassandra.conf
+
+- name: Restart rsyslog
+  service: name=rsyslog state=restarted
+
+- name: Add logrotate job
+  template: src=cassandra.logrotate.j2 dest=/etc/logrotate.d/cassandra.conf
+  
+- name: Start cassandra
+  service: name=cassandra enabled=yes state=started
+
+- include: cassandra_backup.yml

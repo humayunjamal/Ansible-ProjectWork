@@ -1,0 +1,18 @@
+---
+
+elasticsearch_version: 0.20.6
+elasticsearch_user: "elasticsearch"
+elasticsearch_group: "elasticsearch"
+elasticsearch_tarball: "elasticsearch-{{ elasticsearch_version }}.tar.gz" 
+elasticsearch_download_url: "https://s3-eu-west-1.amazonaws.com/stratos-binary-artifacts/mirrors/elasticsearch-{{ elasticsearch_version }}.tar.gz"
+elasticsearch_data_dir: /apps/elasticsearch/data
+elasticsearch_home: /apps/elasticsearch
+elasticsearch_logs_dir: /apps/elasticsearch/logs
+elasticsearch_maxmem: "5G"
+elasticsearch_minmem: "5G"
+elasticsearch_number_of_shards: 5
+elasticsearch_number_of_replicas: 1 
+elasticsearch_cluster_number: 2 
+elasticsearch_minimum_masters: 1
+elasticsearch_cluster_hosts: '["esearch-1a", "esearch-1b", "esearch-2a", "esearch-2b"]'
+aws_esearch_LB: 'internal-oeuw1-bas-elastics-1IFCNRQFGXQ3N-944840511.eu-west-1.elb.amazonaws.com'

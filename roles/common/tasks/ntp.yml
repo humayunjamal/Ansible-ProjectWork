@@ -1,0 +1,9 @@
+---
+- name: Install NTP
+  apt: pkg=ntp state=installed
+  
+- name: Customise NTP configuration
+  template: src=ntp.conf.j2 dest=/etc/ntp.conf
+  notify: restart ntp
+
+- meta: flush_handlers

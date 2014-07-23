@@ -1,0 +1,11 @@
+---
+region: eu-west-1
+aws_env: SSEUW1A
+vpc: vpc-5d46543f
+subnet: subnet-261d1952
+sg: "{{ aws_env }}:jenkins-ci"
+instance_type: m3.medium
+ami: ami-0b2bee7c
+key: sseuw1
+jump_a: 10.50.135.20
+jump_b: 10.50.136.20

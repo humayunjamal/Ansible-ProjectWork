@@ -1,0 +1,22 @@
+[all:vars]
+env=ss
+use_openjdk=false
+
+
+[apptier]
+jenkins_ci_slavesapp11.sseuw1.api.bskyb.com  host_ip=10.50.135.226 instance_id=i-2909f86a aws_name=ip-10-50-135-226
+jenkins_ci_slavesapp12.sseuw1.api.bskyb.com  host_ip=10.50.135.227 instance_id=i-3709f874 aws_name=ip-10-50-135-227
+jenkins_ci_slavesapp13.sseuw1.api.bskyb.com  host_ip=10.50.135.228 instance_id=i-3609f875 aws_name=ip-10-50-135-228
+jenkins_ci_slavesapp14.sseuw1.api.bskyb.com  host_ip=10.50.136.64 instance_id=i-7275bd30 aws_name=ip-10-50-136-64
+jenkins_ci_slavesapp15.sseuw1.api.bskyb.com  host_ip=10.50.136.62 instance_id=i-7075bd32 aws_name=ip-10-50-136-62
+jenkins_ci_slavesapp16.sseuw1.api.bskyb.com  host_ip=10.50.136.63 instance_id=i-7175bd33 aws_name=ip-10-50-136-63
+
+
+
+[invdata]
+jenkins_ci_slavesapp11.sseuw1.api.bskyb.com
+jenkins_ci_slavesapp12.sseuw1.api.bskyb.com
+jenkins_ci_slavesapp13.sseuw1.api.bskyb.com
+jenkins_ci_slavesapp14.sseuw1.api.bskyb.com
+jenkins_ci_slavesapp15.sseuw1.api.bskyb.com
+jenkins_ci_slavesapp16.sseuw1.api.bskyb.com

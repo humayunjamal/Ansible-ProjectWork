@@ -1,0 +1,16 @@
+
+env_prefix: oeuw1
+
+aws_size: t1.micro
+env_num: 1
+#java_opts: "-Denvironment=devops-deuw1"
+#number of instances per availability zone
+web_count_1b: 0
+web_count_1a: 0
+app_count_1a: 0
+app_count_1b: 0
+
+#inital value of counter for dns records
+app_count: 1
+web_count: 1
+

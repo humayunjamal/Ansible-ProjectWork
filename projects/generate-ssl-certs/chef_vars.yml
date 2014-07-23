@@ -1,0 +1,6 @@
+---
+generate_cert: true
+self_signed: true
+
+ssl_cert_dir: /var/opt/chef-server/ca
+ssl_key_dir: /var/opt/chef-server/ca

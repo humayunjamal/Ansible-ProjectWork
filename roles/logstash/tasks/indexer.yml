@@ -1,0 +1,20 @@
+---
+
+- name: Create Install Patterns
+  file: path={{ logstash_pattern_dir }} state=directory owner={{ logstash_user }} group={{ logstash_group }} mode=0755
+
+- name: Create pattern files 
+  copy: src={{ item }} dest={{ logstash_pattern_dir }}/{{ item }} owner={{ logstash_user }} group={{ logstash_group }} mode=0644
+  with_items: logstash_pattern_files 
+
+- name: Add config file
+  template: src=indexer_conf.j2 dest={{ logstash_home }}/logstash_indexer.conf owner={{ logstash_user }} group={{ logstash_group }} mode=0644
+
+- name: Add init file
+  template: src=indexer_init_conf.j2 dest=/etc/init/logstash-indexer.conf owner=root group=root mode=0644
+
+- name: Create and Make sure log file exists
+  file: path={{ logstash_log_dir }}/logstash-indexer.log owner={{ logstash_user }} group={{ logstash_group }} mode=0644 state=touch
+
+- name: Start Logstash Indexer Service
+  service: name=logstash-indexer enabled=yes state=started

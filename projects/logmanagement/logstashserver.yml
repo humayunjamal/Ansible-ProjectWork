@@ -1,0 +1,11 @@
+---
+
+- hosts: logstashserver
+  sudo: yes
+  vars_files:
+    - roles/logstash/vars/yml
+  roles:
+    - common
+    - java
+    - rabbitmq
+    - logstash 

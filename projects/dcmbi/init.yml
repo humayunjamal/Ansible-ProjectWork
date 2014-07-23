@@ -1,0 +1,22 @@
+---
+#play to install environment instances
+- hosts: local
+  connection: local
+  gather_facts: False
+  vars_files:
+    - projects/{{ project_prefix }}/{{ c_type }}{{ env }}
+  roles:
+    - ec2build
+  tasks:
+    - name: Configure app tier
+      command: ansible-playbook -i {{ env }}{{ env_num }} apptier.yml
+      register: app_done
+      when: app_serv
+    
+    - name: Configure web tier
+      command: ansible-playbook -i {{ env }}{{ env_num }} webtier.yml
+      when: web_serv
+      
+    - name: Deploy war file to tomcat
+      command: ansible-playbook -i {{ env }}{{ env_num }} deploywar.yml
+      when: app_done|success or app_done|skipped

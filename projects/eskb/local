@@ -1,0 +1,5 @@
+[local]
+localhost
+
+[local:vars]
+app_serv=true

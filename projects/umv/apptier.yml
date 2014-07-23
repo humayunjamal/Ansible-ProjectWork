@@ -1,0 +1,16 @@
+---
+# This Playbook configures the web tier 
+
+- hosts: invdata
+  gather_facts: True
+
+- hosts: apptier
+  sudo: yes
+  vars_files:
+    - apptier_vars.yml
+  roles:
+    - common
+    - java
+    - elasticsearch
+    - kibana
+

@@ -1,0 +1,48 @@
+aws_vpc:  vpc-1e28307c
+
+aws_web_subnet_1a: subnet-f3b6bf87
+web_subnet_1a: 10.50.40.0/25
+aws_web_subnet_1b: subnet-89c9e0cf
+web_subnet_1b: 10.50.40.128/25
+
+aws_app_subnet_1a: subnet-feb6bf8a
+app_subnet_1a: 10.50.41.0/24
+app_group_a: d1euw1-base-sgBase-1O4T5H1VQ5ZB2
+aws_app_subnet_1b: subnet-8bc9e0cd
+app_subnet_1b: 10.50.42.0/24
+app_group_b: d1euw1-base-sgBase-1O4T5H1VQ5ZB2
+
+aws_db_subnet_1a: subnet-f2b6bf86
+db_subnet_1a: 10.50.43.0/24
+db_group_a: d1euw1-base-sgBase-1O4T5H1VQ5ZB2
+aws_db_subnet_1b: subnet-88c9e0ce
+db_subnet_1b: 10.50.44.0/24
+db_group_b: d1euw1-base-sgBase-1O4T5H1VQ5ZB2
+
+aws_region: eu-west-1
+env_prefix: d1euw1
+aws_dns_zone: "{{ env_prefix }}.api.bskyb.com"
+aws_key_name: "{{ env_prefix }}"
+
+base_group: sg-92c62ff7
+env_num: 1
+
+#number of instances per availability zone
+web_count_1b: 0
+web_count_1a: 0
+app_count_1a: 1
+app_count_1b: 0
+db_count_1a: 1
+db_count_1b: 1
+
+#inital value of counter for dns records
+app_count: 1
+web_count: 1
+db_count: 1
+
+aws_size: m3.medium
+aws_ami: ami-0b2bee7c
+
+app_serv: true
+web_serv: false
+db_serv: true

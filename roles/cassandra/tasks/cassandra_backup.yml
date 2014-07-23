@@ -1,0 +1,9 @@
+---
+- name: Create {{ scripts_bin_dir }}
+  file: dest={{ scripts_bin_dir }} state=directory owner='root' group='root' mode=0755
+
+- name: Copy cassandra_backup.sh to {{ scripts_bin_dir }}
+  copy: src=cassandra_backup.sh dest={{ scripts_bin_dir }}/cassandra_backup.sh owner='root' group='root' mode=0755
+
+- name: Copy cassandra_restore.sh to {{ scripts_bin_dir }}
+  copy: src=cassandra_restore.sh dest={{ scripts_bin_dir }}/cassandra_restore.sh owner='root' group='root' mode=0755

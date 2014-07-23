@@ -1,0 +1,122 @@
+---
+cassandra_base_dir: /apps
+cassandra_bin_dir: "{{ cassandra_base_dir }}/cassandra/bin"
+cassandra_config_dir: "{{ cassandra_base_dir }}/cassandra/conf"
+cassandra_lib_dir: "{{ cassandra_base_dir }}/cassandra/lib"
+
+cassandra_data_base_dir: "{{ cassandra_base_dir }}/data/cassandra"
+cassandra_data_dir: "{{ cassandra_data_base_dir }}/data"
+cassandra_logs_dir: "{{ cassandra_data_base_dir }}/logs"
+cassandra_commitlog_dir: "{{ cassandra_data_base_dir }}/commitlog"
+cassandra_saved_caches_dir: "{{ cassandra_data_base_dir }}/saved_caches"
+cassandra_log_file: "{{ cassandra_logs_dir }}/system.log"
+
+cassandra_seeds: []
+
+deployment: "11x"
+cassandra_cluster_name: "TestCluster"
+cluster_size: 3
+current_role: "cassandra"
+reporter_url: "https://s3-eu-west-1.amazonaws.com/stratos-binary-artifacts/cassandra-metrics-graphite/reporter.jar"
+metrics_graphite_url: "https://s3-eu-west-1.amazonaws.com/stratos-binary-artifacts/mirrors/metrics-graphite-2.2.0.jar"
+s3bucket: "stratos-binary-artifacts"
+cassandra_version: "1.2.14"
+cassandra_tarball: "apache-cassandra-{{ cassandra_version }}-bin.tar.gz"
+checksum: "0535c2888c9b057fe987ff8468f5dce5830d0b935b2ff1d61c4077b59f27d79c"
+jna_version: "3.5.1"
+cassandra_user: "cassandra"
+cassandra_home: "/home/cassandra"
+backup_dir: "/apps/cassandra-backup"
+#logs_directory: "{{ cassandra_base_dir }}/cassandra/logs"
+token_position: false
+initial_token: false
+rpc_address: false
+confPath: "/etc/cassandra/"
+download_path: "/var/tmp"
+prime: true
+increase_heap_by_mb: "0"
+num_tokens: 256
+auto_bootstrap: true
+hinted_handoff_enabled: true
+max_hint_window_in_ms: 3600000
+hinted_handoff_throttle_in_kb: 1024
+max_hints_delivery_threads: 8
+hinted_handoff_throttle_delay_in_ms: 50
+populate_io_cache_on_flush: "false"
+authenticator: "org.apache.cassandra.auth.AllowAllAuthenticator"
+authority: "org.apache.cassandra.auth.AllowAllAuthority"
+partitioner: "org.apache.cassandra.dht.Murmur3Partitioner"
+disk_failure_policy: "stop"
+key_cache_size_in_mb: 1024
+key_cache_save_period: 14400
+key_cache_keys_to_save: 100
+row_cache_size_in_mb: 0
+row_cache_save_period: 0
+row_cache_keys_to_save: 0
+row_cache_provider: "SerializingCacheProvider"
+commitlog_rotation_threshold_in_mb: 128
+commitlog_sync: "periodic"
+commitlog_sync_period_in_ms: 10000
+commitlog_segment_size_in_mb: 32
+trickle_fsync: "false"
+trickle_fsync_interval_in_kb: 10240
+flush_largest_memtables_at: 0.75
+reduce_cache_sizes_at: 0.8
+reduce_cache_capacity_to: 0.8
+seed_provider_class_name: "org.apache.cassandra.locator.SimpleSeedProvider"
+disk_access_mode: "auto"
+concurrent_reads: 80
+concurrent_writes: 64
+memtable_flush_queue_size: 4
+memtable_flush_writers: 1
+sliced_buffer_size_in_kb: 64
+storage_port: 7000
+ssl_storage_port: 7001
+rpc_port: 9160
+rpc_keepalive: "true"
+rpc_server_type: "sync"
+start_rpc: "true"
+thrift_framed_transport_size_in_mb: 15
+thrift_max_message_length_in_mb: 16
+incremental_backups: "false"
+snapshot_before_compaction: "false"
+read_request_timeout_in_ms: 10000
+range_request_timeout_in_ms: 10000
+write_request_timeout_in_ms: 10000
+truncate_request_timeout_in_ms: 60000
+request_timeout_in_ms: 10000
+cross_node_timeout: "false"
+auto_snapshot: "true"
+column_index_size_in_kb: 64
+in_memory_compaction_limit_in_mb: 64
+concurrent_compactors: 4
+compaction_throughput_mb_per_sec: 16
+compaction_preheat_key_cache: "true"
+concurrent_compactors: 1
+stream_throughput_outbound_megabits_per_sec: 400
+rpc_timeout_in_ms: 10000
+phi_convict_threshold: 8
+snitch_type: "org.apache.cassandra.locator.PropertyFileSnitch"
+request_scheduler: "org.apache.cassandra.scheduler.NoScheduler"
+index_interval: 128
+memtable_total_space_in_mb: 2048
+multithreaded_compaction: "false"
+commitlog_total_space_in_mb: 4096
+MAX_HEAP_SIZE: "4G"
+HEAP_NEWSIZE: "800M"
+dynamic_snitch_update_interval_in_ms: 100
+dynamic_snitch_reset_interval_in_ms: 600000
+dynamic_snitch_badness_threshold: 0.1
+internode_compression: "dc"
+server_encryption_options_internode_encryption: "none"
+server_encryption_options_keystore: "conf/.keystore"
+server_encryption_options_keystore_password: "cassandra"
+server_encryption_options_truststore: "conf/.truststore"
+server_encryption_options_truststore_password: "cassandra"
+client_encryption_options_enabled: "false"
+client_encryption_options_keystore: "conf/.keystore"
+client_encryption_options_keystore_password: "cassandra"
+splay: 600
+snapshots_retention_days: 7
+
+scripts_bin_dir: '/opt/sky/bin'

@@ -1,0 +1,149 @@
+input {
+  redis {
+    host => "{{ logstash_redis_host }}"
+    type => "redis-input"
+    data_type => "list"
+    key => "syslog"
+    #codec => json
+    format => "json_event"
+  }
+}
+
+# Parse the raw syslog
+filter {
+  syslog_pri { }
+  date {
+      type => "syslog"
+      match => [ "syslog_timestamp", "MMM  d HH:mm:ss", "MMM dd HH:mm:ss" ]
+  }
+  multiline {
+    type => "syslog"
+    pattern => "^\s"
+    what => "previous"
+  }
+  # Remove blank lines
+  grep {
+    type => "syslog"
+    match => [ "@message", "(.+)" ]
+    drop => true
+  }
+  grok {
+      type => "syslog"
+      match => [ "@message", "%{SYSLOG5424PRI}%{SYSLOGTIMESTAMP:syslog_timestamp} %{IPORHOST:syslog_logsource} %{GREEDYDATA:syslog_message}" ]
+      #patterns_dir => [ "/apps/logstash/logstash_patterns" ]
+      remove_tag => [ "_grokparsefailure" ]
+  }
+  mutate {
+      type => "syslog"
+      replace => [ "@message", "%{syslog_message}" ]
+      replace => [ "@source_host", "%{syslog_logsource}" ]
+  }
+  mutate {
+      type => "syslog"
+      remove  => [ "syslog_message", "syslog_timestamp", "syslog_logsource" ]
+      remove  => [ "facility", "facility_label", "severity_label", "facility_code", "syslog_severity_code", "source_path" ]
+  }
+}
+
+# SSH Filter
+filter {
+  grok {
+    match => [ "@message", "sshd\[%{BASE10NUM}\]:  pam_unix\(sshd:session\): session opened for user %{USERNAME:username} by \(uid=%{BASE10NUM:uid}\)" ]
+    exclude_tags => [ "grok_match" ]
+    add_tag => [ "sshd" ]
+    add_tag => [ "session_open" ]
+    add_tag => [ "grok_match" ]
+    remove_tag => [ "_grokparsefailure" ]
+  }
+  grok {
+    match => [ "@message", "sshd\[%{BASE10NUM}\]:  pam_unix\(sshd:session\): session closed for user %{USERNAME:username}" ]
+    exclude_tags => [ "grok_match" ]
+    add_tag => [ "sshd" ]
+    add_tag => [ "session_close" ]
+    add_tag => [ "grok_match" ]
+    remove_tag => [ "_grokparsefailure" ]
+  }
+  grok {
+    match => [ "@message", "sshd\[%{BASE10NUM}\]: Failed password for %{USERNAME:username} from %{IP:src_ip} port %{BASE10NUM:port} ssh2" ]
+    exclude_tags => [ "grok_match" ]
+    add_tag => [ "sshd" ]
+    add_tag => [ "failed_login" ]
+    add_tag => [ "grok_match" ]
+    remove_tag => [ "_grokparsefailure" ]
+  }
+  grok {
+    pattern => [ "@message", "sshd\[%{BASE10NUM}\]: Failed password for invalid user %{USERNAME:username} from %{IP:src_ip} port %{BASE10NUM:port} ssh2" ]
+    exclude_tags => [ "grok_match" ]
+    add_tag => [ "sshd" ]
+    add_tag => [ "brute_force_attack" ]
+    add_tag => [ "grok_match" ]
+    remove_tag => [ "_grokparsefailure" ]
+  }
+  grok {
+    pattern => [ "@message", "sshd\[%{BASE10NUM}\]: Accepted publickey for %{USERNAME:username} from %{IP:src_ip} port %{BASE10NUM:port} ssh2" ]
+    exclude_tags => [ "grok_match" ]
+    add_tag => [ "sshd" ]
+    add_tag => [ "successful_login" ]
+    add_tag => [ "grok_match" ]
+    remove_tag => [ "_grokparsefailure" ]
+  }
+}
+
+# SUDO Filter
+filter {
+ grok {
+    match => [ "@message", "sudo: pam_unix\(sudo:session\): session opened for user %{USERNAME:sudo_user} by \(uid=%{BASE10NUM:sudo_uid}\)" ]
+    exclude_tags => [ "grok_match" ]
+    add_tag => [ "sudo" ]
+    add_tag => [ "session_open" ]
+    add_tag => [ "grok_match" ]
+    remove_tag => [ "_grokparsefailure" ]
+  }
+  grok {
+    match => [ "@message", "sudo: pam_unix\(sudo:session\): session closed for user %{USERNAME:sudo_user}" ]
+    exclude_tags => [ "grok_match" ]
+    add_tag => [ "sudo" ]
+    add_tag => [ "session_close" ]
+    add_tag => [ "grok_match" ]
+    remove_tag => [ "_grokparsefailure" ]
+  }
+  grok {
+    match => [ "@message", "sudo:   %{USERNAME} : TTY=(%{TTY:sudo_tty}|unknown) ; PWD=%{PATH:sudo_pwd} ; USER=%{USERNAME:sudo_user} ; COMMAND=%{GREEDYDATA:sudo_cmd}" ]
+    exclude_tags => [ "grok_match" ]
+    add_tag => [ "sudo" ]
+    add_tag => [ "run_command" ]
+    add_tag => [ "grok_match" ]
+    remove_tag => [ "_grokparsefailure" ]
+  }
+}
+
+# Nginx Filter
+# filter {
+#  grok {
+#    patterns_dir => [ "<%=node['logstash']['pattern_dir'] %>" ]
+#    match => [ "@message", "%{SKYNGINXWEB}" ]
+#    exclude_tags => [ "grok_match" ]
+#    add_tag => [ "nginx" ]
+#    add_tag => [ "grok_match" ]
+#    remove_tag => [ "_grokparsefailure" ]
+#  }
+# }
+
+output {
+  stdout {
+     debug => false
+     debug_format => "json"
+  }
+
+  #statsd {
+  #  host => "127.0.0.1"
+  #  port => 8125
+  #  namespace => "logstash"
+  #  increment => "lognumber.%{hostname}"
+  #}
+
+  elasticsearch_http {
+    host => "{{ logstash_elastic_search }}"
+    #codec => json
+  }
+}

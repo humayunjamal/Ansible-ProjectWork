@@ -1,0 +1,42 @@
+---
+- name: Create security group for web tier
+  ec2_group:
+    name: "{{ env_prefix }}-SG{{project_prefix}}Web"
+    description: Access to CRM API Web Servers
+    vpc_id: "{{ aws_vpc }}"
+    region: "{{ aws_region }}"
+    rules:
+    - proto: tcp
+      from_port: 3000
+      to_port: 3000
+      cidr_ip: 10.0.0.0/8
+    - proto: tcp
+      from_port: 80
+      to_port: 80
+      cidr_ip: 10.0.0.0/8
+    - proto: tcp
+      from_port: 22
+      to_port: 22
+      cidr_ip: 10.0.0.0/8
+  register: ec2websg
+  
+- name: Create security group for app tier
+  ec2_group:
+    name: "{{ env_prefix }}-SG{{project_prefix}}App"
+    description: Access to CRM API App Servers
+    vpc_id: "{{ aws_vpc }}"
+    region: "{{ aws_region }}"
+    rules:
+    - proto: tcp
+      from_port: 8080
+      to_port: 8080
+      cidr_ip: 10.0.0.0/8
+    - proto: tcp
+      from_port: 8080
+      to_port: 8080
+      group_id: "{{ec2websg.group_id}}"
+    - proto: tcp
+      from_port: 22
+      to_port: 22
+      cidr_ip: 10.0.0.0/8
+  register: ec2appsg

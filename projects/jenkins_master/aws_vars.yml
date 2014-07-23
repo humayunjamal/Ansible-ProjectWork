@@ -1,0 +1,14 @@
+---
+aws:
+  region: eu-west-1
+  env: SSEUW1A
+  master:
+    name: SSEUW1A:jenkins-master
+    vpc: vpc-5d46543f
+    subnet: subnet-261d1952
+    sg: SSEUW1A:jenkins-master:0
+    instance_type: m3.large
+    ami: ami-0b2bee7c
+    key: sseuw1
+    private_ip: 10.50.135.210
+    eip: 54.72.74.5

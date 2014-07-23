@@ -1,0 +1,70 @@
+[all:vars]
+env={{ env }}
+use_openjdk=false
+
+{% if web_serv | bool %}
+[webtier]
+{% if ec2web_a and ec2web_b %}
+{% set weblist = ec2web_a.tagged_instances + ec2web_b.tagged_instances %}
+{% for host in weblist %}
+{% set num = web_count + loop.index0 %}
+{% set hostname_a=host.private_dns_name.split('.') %}
+{{ project_prefix }}web{{env_num}}{{num}}.{{ aws_dns_zone }}  host_ip={{host.private_ip}} instance_id={{ host.id }} aws_name={{hostname_a[0]}}
+{% endfor %}
+{% endif %}
+{% endif %}
+
+{% if app_serv | bool %}
+[apptier]
+{% if ec2app_a and ec2app_b %}
+{% set applist = ec2app_a.tagged_instances + ec2app_b.tagged_instances %}
+{% for host in applist %}
+{% set num = app_count + loop.index0 %}
+{% set hostname_a=host.private_dns_name.split('.') %}
+{{ project_prefix }}app{{env_num}}{{num}}.{{ aws_dns_zone }}  host_ip={{host.private_ip}} instance_id={{ host.id }} aws_name={{hostname_a[0]}}
+{% endfor %}
+{% endif %}
+{% endif %}
+
+{% if db_serv | bool %}
+[dbtier]
+{% if ec2db_a and ec2db_b %}
+{% set dblist = ec2db_a.tagged_instances + ec2db_b.tagged_instances %}
+{% for host in dblist %}
+{% set num = db_count + loop.index0 %}
+{% set hostname_a=host.private_dns_name.split('.') %}
+{{ project_prefix }}db{{env_num}}{{num}}.{{ aws_dns_zone }}  host_ip={{host.private_ip}} instance_id={{ host.id }} aws_name={{hostname_a[0]}}
+{% endfor %}
+{% endif %}
+{% endif %}
+
+
+[invdata]
+{% if web_serv | bool %}
+{% if ec2web_a and ec2web_b %}
+{% set weblist = ec2web_a.tagged_instances + ec2web_b.tagged_instances %}
+{% for host in weblist %}
+{% set num = web_count + loop.index0 %}
+{{ project_prefix }}web{{env_num}}{{num}}.{{ aws_dns_zone }}
+{% endfor %}
+{% endif %}
+{% endif %}
+{% if app_serv | bool %}
+{% if ec2app_a and ec2app_b %}
+{% set applist = ec2app_a.tagged_instances + ec2app_b.tagged_instances %}
+{% for host in applist %}
+{% set num = app_count + loop.index0 %}
+{{ project_prefix }}app{{env_num}}{{num}}.{{ aws_dns_zone }}
+{% endfor %}
+{% endif %}
+{% endif %}
+{% if db_serv | bool %}
+{% if ec2db_a and ec2db_b %}
+{% set dblist = ec2db_a.tagged_instances + ec2db_b.tagged_instances %}
+{% for host in dblist %}
+{% set num = db_count + loop.index0 %}
+{% set hostname_a=host.private_dns_name.split('.') %}
+{{ project_prefix }}db{{env_num}}{{num}}.{{ aws_dns_zone }}
+{% endfor %}
+{% endif %}
+{% endif %}

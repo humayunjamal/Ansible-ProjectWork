@@ -1,0 +1,20 @@
+---
+#common requirements for all nodes
+- include: dns_update.yml
+
+- include: apt.yml
+
+- include: ntp.yml
+
+- include: base_dirs.yml
+
+- include: aws_secure_ephemeral.yml
+  when: use_sec_eph
+  
+- include: rsyslog.yml
+
+- include: collectd.yml
+
+- include: appdynamics_agent.yml
+
+- include: appdynamics_machine_agent.yml

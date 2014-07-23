@@ -1,0 +1,19 @@
+---
+# Play to install environment instances
+- hosts: localhost
+  connection: local
+  #gather_facts: False
+  #sudo: yes
+  vars_files:
+    - aws_ss_env.yml
+#  pre_tasks:
+#    - name: Create security groups
+#      command: ansible-playbook -i local aws_sec_groups.yml
+#  roles:
+#    - ec2build
+  tasks:
+    - name: Configure app tier
+      command: ansible-playbook -i {{ env }}{{ env_num }} apptier.yml
+      when: app_serv
+
+#ansible-playbook -i local init.yml -e "project_prefix=jenkins_ci_slaves env=ss c_type=aws" -vv

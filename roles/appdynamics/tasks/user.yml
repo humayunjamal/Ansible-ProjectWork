@@ -1,0 +1,12 @@
+---
+#Tasks to deploy appdynamics
+# prereqs:
+# disk partition available for data - aws secure ephemeral script
+
+- name: Create appdynamics group
+  user: name={{ appdynamics_group }} 
+
+- name: Create appdynamics user
+  user: name={{ appdynamics_user }} group={{ appdynamics_group }} createhome=yes shell=/bin/bash
+
+

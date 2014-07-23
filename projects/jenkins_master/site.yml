@@ -1,0 +1,3 @@
+---
+- include: aws_jenkins_master.yml
+- include: jenkins_master.yml

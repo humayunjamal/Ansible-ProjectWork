@@ -1,0 +1,45 @@
+user {{ kibana_user }};
+worker_processes  {{ nginx_worker_processes }};
+
+error_log  {{ nginx_log_dir }}/error.log;
+pid        {{ nginx_pid }};
+
+events {
+  worker_connections  {{ nginx_worker_connections }};
+}
+
+http {
+  include       {{ nginx_dir }}/mime.types;
+  default_type  application/octet-stream;
+
+  log_format main  '$host - [$time_local] '
+                   '"$request" $status $bytes_sent '
+                   '"$http_referer" "$http_user_agent" '
+                   '$remote_addr request_time: $request_time';
+
+  access_log	{{ nginx_log_dir }}/access.log main;
+
+  sendfile on;
+  tcp_nopush on;
+  tcp_nodelay on;
+  server_tokens off;
+
+  keepalive_timeout  65;
+  keepalive_requests 100;
+  
+  gzip  on;
+  gzip_http_version 1.0;
+  gzip_comp_level 2;
+  gzip_proxied any;
+  gzip_vary off;
+  gzip_types text/plain text/css application/x-javascript text/xml application/xml application/xml+rss text/javascript application/javascript application/json;
+  gzip_min_length  1000;
+  gzip_disable     "MSIE [1-6]\.";
+
+  server_names_hash_bucket_size 64;
+  types_hash_max_size 2048;
+  types_hash_bucket_size 64;
+
+  include /etc/nginx/conf.d/*.conf;
+  include /etc/nginx/sites-enabled/*;
+}

@@ -1,0 +1,8 @@
+---
+- hosts: apptier
+  sudo: yes
+  roles:
+    - common
+    - java
+    - elasticsearch
+    - kibana

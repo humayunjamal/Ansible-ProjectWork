@@ -1,0 +1,10 @@
+---
+- name: Update syslog location to use new log dir
+  template: src=50-default.conf.j2 dest=/etc/rsyslog.d/50-default.conf
+  
+- name: Update rsyslog config file for logging to remote location
+  template: src=rsyslog.conf.j2 dest=/etc/rsyslog.conf
+  notify: restart rsyslog
+
+- meta: flush_handlers
+

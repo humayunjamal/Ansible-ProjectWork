@@ -1,0 +1,9 @@
+---
+- hosts: webtier
+  vars_files:
+    - all_vars.yml
+    - roles/mockdcm/vars.yml
+  roles:
+    - base
+    - common
+    - mockdcm

@@ -1,0 +1,21 @@
+---
+- name: Create security group for Jenkins CI slaves
+  local_action:
+    module: ec2_group
+    name: "{{ base_group }}"
+    description: Access to the jenkins CI slaves
+    vpc_id: "{{ aws_vpc }}"
+    region: "{{ aws_region }}"
+    rules:
+    - proto: tcp
+      from_port: 22
+      to_port: 22
+      cidr_ip: "{{ jenkins_master_private_ip }}/32"
+    - proto: tcp
+      from_port: 22
+      to_port: 22
+      cidr_ip: "{{ aws_jump_a }}/32"
+    - proto: tcp
+      from_port: 22
+      to_port: 22
+      cidr_ip: "{{ aws_jump_b }}/32"

@@ -1,0 +1,11 @@
+---
+region: eu-west-1
+aws_env: OEUW1A
+vpc: vpc-f08b9b92
+subnet: subnet-51477c25
+sg: "{{ aws_env }}:jenkins-slaves"
+instance_type: m3.medium
+ami: ami-0b2bee7c
+key: oeuw1
+jump_a: 10.50.85.20
+jump_b: 10.50.86.20

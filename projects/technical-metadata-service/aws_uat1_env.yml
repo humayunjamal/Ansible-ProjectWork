@@ -1,0 +1,57 @@
+aws_region: eu-west-1
+env_prefix: u1euw1
+aws_vpc:  vpc-40d3cb22
+aws_dns_zone: "{{ env_prefix }}.api.bskyb.com"
+aws_key_name: "{{ env_prefix }}"
+
+aws_web_subnet_1a: subnet-42484036
+web_subnet_1a: 10.50.120.0/25
+aws_web_subnet_1b: subnet-3bc8e17d
+web_subnet_1b: 10.50.120.128/25
+aws_app_subnet_1a: subnet-4e48403a
+app_subnet_1a: 10.50.121.0/24
+aws_app_subnet_1b: subnet-3dc8e17b
+app_subnet_1b: 10.50.122.0/24
+aws_db_subnet_1a: subnet-4c484038
+db_subnet_1a: 10.50.123.0/24
+aws_db_subnet_1b: subnet-39c8e17f
+db_subnet_1b: 10.50.124.0/24
+
+base_group: sg-aec52ccb
+web_group_a: u1euw1-base-sgBase-13FZSAORPBNN1
+web_group_b: u1euw1-base-sgBase-13FZSAORPBNN1
+app_group_a: u1euw1-base-sgBase-13FZSAORPBNN1
+app_group_b: u1euw1-base-sgBase-13FZSAORPBNN1
+db_group_a: u1euw1-base-sgBase-13FZSAORPBNN1
+db_group_b: u1euw1-base-sgBase-13FZSAORPBNN1
+env_num: 1
+
+#number of instances per availability zone
+web_count_1b: 0
+web_count_1a: 0
+app_count_1a: 1
+app_count_1b: 0
+db_count_1a: 0
+db_count_1b: 0
+
+#inital value of counter for dns records
+app_count: 1
+web_count: 1
+db_count: 1
+
+web_size: m1.small
+app_size: c1.large
+db_size: m3.medium
+aws_ami: ami-0b2bee7c
+
+app_serv: true
+web_serv: false
+db_serv: false
+
+# Cassandra
+java_type: oracle_gz
+cluster_name: "tms_cluster"
+cassandra_seeds: ["lakitudb11.u1euw1.api.bskyb.com", "lakitudb12.u1euw1.api.bskyb.com"]
+
+# ELB
+internal_elb_app: internal-u1euw1-ba-tms-app-1000280237.eu-west-1.elb.amazonaws.com

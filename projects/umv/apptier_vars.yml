@@ -1,0 +1,11 @@
+java_type: oracle_gz
+java_version: jdk1.7.0_45
+java_gz_file:  jdk-7u45-linux-x64.tar.gz
+java_base_dir: /usr/lib/jvm
+java_url: "https://s3-eu-west-1.amazonaws.com/stratos-binary-artifacts/mirrors/jdk/7u45/{{ java_gz_file }}"
+java_path: /usr/lib/jvm/{{ java_version }}
+
+tomcat_user: tomcat7
+tomcat_port: 8080
+tomcat_deploy_dir: /var/lib/tomcat7/webapps
+java_opts: "-Denvironment=oeuw1"

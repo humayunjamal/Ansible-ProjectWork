@@ -1,0 +1,118 @@
+# Config file for collectd(1).
+#
+# Some plugins need additional configuration and are disabled by default.
+# Please read collectd.conf(5) for details.
+#
+# You should also read /usr/share/doc/collectd-core/README.Debian.plugins
+# before enabling any more plugins.
+
+Hostname "{{ inventory_hostname }}"
+FQDNLookup false
+BaseDir "/var/lib/collectd"
+PluginDir "/usr/lib/collectd"
+TypesDB "/usr/share/collectd/types.db" "/etc/collectd/my_types.db"
+#Interval 10
+#Timeout 2
+#ReadThreads 5
+
+LoadPlugin syslog
+
+<Plugin syslog>
+	LogLevel info
+</Plugin>
+{% if 'apptier' in group_names or 'dbtier' in group_names %}
+LoadPlugin java
+{% endif %}
+LoadPlugin load
+LoadPlugin memory
+{% if 'webtier' in group_names %}
+LoadPlugin nginx
+<Plugin nginx>
+	URL "http://localhost/status?auto"
+	User "www-user"
+	VerifyPeer false
+	VerifyHost false
+</Plugin>
+
+{% endif %}
+
+LoadPlugin rrdtool
+LoadPlugin write_graphite
+<Plugin write_graphite>
+  <Carbon>
+    Host "{{ graphite_host }}" # GraphiteHostLineMarker
+    Port "{{ graphite_port }}"
+     {% set host = inventory_hostname.split('.')%}
+    Prefix "{{ host[0] }}.{{ host[1] }}"
+    StoreRates true
+    AlwaysAppendDS false
+    EscapeCharacter "_"
+    SeparateInstances true
+  </Carbon>
+</Plugin>
+
+LoadPlugin cpu
+<LoadPlugin df>
+  Interval 600
+</LoadPlugin>
+<Plugin df>
+  FSType "ext2"
+  FSType "ext3"
+  FSType "ext4"
+  FSType "xfs"
+  ReportByDevice false
+</Plugin>
+
+LoadPlugin disk
+LoadPlugin processes
+<Plugin processes>
+  Process collectd
+  {% if processes %}
+    {% for p in processes %}
+      {% for (n,q) in p.iteritems() %}
+  ProcessMatch {{ n }} "{{ q }}"
+      {% endfor %}
+    {% endfor %}
+  {% endif %}
+</Plugin>
+
+LoadPlugin swap
+<Plugin swap>
+  ReportBytes true
+  ReportByDevice true
+</Plugin>
+
+LoadPlugin interface
+<Plugin interface>
+  Interface "eth0"
+  IgnoreSelected false
+</Plugin>
+
+LoadPlugin ContextSwitch
+LoadPlugin ntpd
+<Plugin ntpd>
+  ReverseLookups false
+  IncludeUnitID true
+</Plugin>
+
+{% if 'webtier' in group_names%}
+
+<Plugin tcpconns>
+	ListeningPorts false
+	LocalPort "80"
+  RemotePort "9001"
+</Plugin>
+
+{% elif 'apptier' in group_names %}
+
+<Plugin tcpconns>
+	ListeningPorts false
+	LocalPort "9001"
+	RemotePort "27017"
+</Plugin>
+
+{% endif %}
+
+
+Include "/etc/collectd/filters.conf"
+Include "/etc/collectd/thresholds.conf"

@@ -1,0 +1,1 @@
+1. Add tests to confirm environment is up and running.  This is based on using URL to confirm querying the api, as well as an xml file PUT to test db write functions

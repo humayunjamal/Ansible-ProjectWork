@@ -1,0 +1,14 @@
+---
+#play to install environment instances
+- hosts: local
+  connection: local
+  gather_facts: False
+  vars_files:
+    - projects/{{ project_prefix }}/{{ c_type }}{{ env }}
+  roles:
+    - ec2build
+  tasks:
+    - name: Configure app tier
+      command: ansible-playbook -i {{ env }}{{ env_num }} apptier.yml
+      register: app_done
+      when: app_serv and web_count_1b > 0 and web_count_1a > 0

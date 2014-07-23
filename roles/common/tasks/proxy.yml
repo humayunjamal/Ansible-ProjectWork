@@ -1,0 +1,4 @@
+---
+- name: Add system-wide http_proxy environment settings 
+  copy: src=proxy.sh dest=/etc/profile.d/proxy.sh mode=0644
+  when: add_proxy

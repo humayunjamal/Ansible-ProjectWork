@@ -1,0 +1,11 @@
+---
+- hosts: internal-repo
+  gather_facts: False
+  sudo: yes
+  tags: internal_repo
+  roles:
+    - ntp_client
+    - nginx_ssl
+    - oracle_jdk7
+    - nexus
+    - aptly

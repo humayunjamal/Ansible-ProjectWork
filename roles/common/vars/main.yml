@@ -1,0 +1,46 @@
+---
+base_dir: /var/sky
+base_log_dir: "{{ base_dir }}/log"
+base_pid_dir: "{{ base_dir }}/run"
+
+graphite_host: graphite
+graphite_port: 2003
+
+keys_path: /root/.keys
+
+# aws_secure_ephemeral
+use_sec_eph: no
+
+# collectd
+processes: []
+
+# proxy
+add_proxy: false
+http_proxy: http://proxy:80/
+
+#appdynamics machine agent
+proxy_env:
+  http_proxy: http://proxy:80/
+  https_proxy: http://proxy:80/
+
+appdynamics_user: "appdynamics"
+appdynamics_group: "appdynamics"
+appdynamics_machine_agent_download_url: "https://s3-eu-west-1.amazonaws.com/stratos-binary-artifacts/AppDynamics/{{ appdynamics_machine_agent }}"
+appdynamics_agent_download_url: "https://s3-eu-west-1.amazonaws.com/stratos-binary-artifacts/AppDynamics/{{ appdynamics_agent }}"
+appdynamics_agent_local_pkg_store: /tmp/AppDynamicsAgent.zip
+appdynamics_machine_agent_local_pkg_store: /tmp/AppDynamicsMachineAgent.zip
+appdynamics_machine_agent: "AppDynamicsMachineAgent.zip"
+appdynamics_agent: "AppDynamicsAgent.zip"
+appdynamics_machine_agent_logdir: /var/log/appdynamics/machineagent
+appdynamics_agent_logdir: /var/log/appdynamics/agent
+appdynamics_machine_agent_install_dir: /apps/AppDynamics/MachineAgent
+appdynamics_agent_install_dir: /apps/AppDynamics/Agent
+appdynamice_machine_agent_version: 3.7.14
+appdynamice_agent_version: 3.7.14
+java_home: "{{ lookup('env','JAVA_HOME') }}"
+appdynamics_agent_controller: ""
+appdynamics_controller_appserver_port: 8090
+appdynamics_agent_application: "" 
+appdynamics_agent_tier: "App Tier"
+node_name: "{{ lookup('env','HOSTNAME') }}"
+

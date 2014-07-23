@@ -1,0 +1,22 @@
+[webtier]
+technical-metadata-serviceweb11.u1euw1.api.bskyb.com  host_ip=10.50.120.79 instance_id=i-b1a96df2 aws_name=ip-10-50-120-79
+technical-metadata-serviceweb12.u1euw1.api.bskyb.com  host_ip=10.50.120.219 instance_id=i-5e9d6c1c aws_name=ip-10-50-120-219
+
+[dbtier]
+technical-metadata-servicedb11.u1euw1.api.bskyb.com  host_ip=10.50.123.167 instance_id=i-3ebd797d aws_name=ip-10-50-123-167
+technical-metadata-servicedb12.u1euw1.api.bskyb.com  host_ip=10.50.124.121 instance_id=i-d415cc96 aws_name=ip-10-50-124-121
+
+[technical-metadata-service]
+technical-metadata-serviceapp11.u1euw1.api.bskyb.com  host_ip=10.50.121.241 instance_id=i-9370b4d0 aws_name=ip-10-50-121-241
+technical-metadata-serviceapp13.u1euw1.api.bskyb.com  host_ip=10.50.122.177 instance_id=i-d11cc493 aws_name=ip-10-50-122-177
+
+[mock-catalogue-feeds]
+technical-metadata-serviceapp12.u1euw1.api.bskyb.com  host_ip=10.50.121.240 instance_id=i-9270b4d1 aws_name=ip-10-50-121-240
+
+[tms-demo-app]
+technical-metadata-serviceapp14.u1euw1.api.bskyb.com  host_ip=10.50.122.178 instance_id=i-d61cc494 aws_name=ip-10-50-122-178
+
+[apptier:children]
+technical-metadata-service
+mock-catalogue-feeds
+tms-demo-app

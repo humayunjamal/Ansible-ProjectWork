@@ -1,0 +1,2 @@
+cluster_name: 'UMVCluster'
+cassandra_seeds: ['node1', 'node2']

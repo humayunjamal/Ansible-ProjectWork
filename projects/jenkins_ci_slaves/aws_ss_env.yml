@@ -1,0 +1,33 @@
+---
+# Security group
+aws_jump_a: 10.50.135.20
+aws_jump_b: 10.50.136.20
+jenkins_master_eip: 54.72.74.5
+jenkins_master_private_ip: 10.50.135.210
+
+# AWS
+aws_region: eu-west-1
+aws_vpc: vpc-5d46543f
+env_prefix: sseuw1
+aws_app_subnet_1a: subnet-261d1952
+aws_app_subnet_1b: subnet-d9f0d49f
+app_subnet_1a: 10.50.135.0/24
+app_subnet_1b: 10.50.136.0/24
+aws_dns_zone: "{{ env_prefix }}.api.bskyb.com"
+aws_key_name: "{{ env_prefix }}"
+base_group: "{{ env_prefix }}-SG{{project_prefix}}App"
+aws_size: m3.medium
+aws_ami: ami-0b2bee7c
+env_num: 1
+
+# Layers config
+app_serv: true
+web_serv: false
+db_serv: false
+
+# Number of instances per availability zone
+app_count_1a: 3
+app_count_1b: 3
+
+# Inital value of counter for dns records
+app_count: 1

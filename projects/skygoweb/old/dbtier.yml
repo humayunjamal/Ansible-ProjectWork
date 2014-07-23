@@ -1,0 +1,12 @@
+---
+- hosts: dbtier
+  remote_user: root
+  vars_files:
+    - all_vars.yml
+    - "../../roles/{{ db_type }}/vars.yml"
+    - dbtier_vars.yml
+    - "{{ db_type }}_vars.yml"
+  roles:
+#    - base
+#    - common
+    - "{{ db_type }}"

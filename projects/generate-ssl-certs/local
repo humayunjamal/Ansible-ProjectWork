@@ -1,0 +1,3 @@
+[local]
+127.0.0.1 ssl_gen_cn=*.api.bskyb.com ssl_key_name=api.bskyb.key ssl_csr_name=api.bskyb.csr ssl_cert_name=api.bskyb.crt app_name=csr
+#127.0.0.1 ssl_gen_cn=chef.internal ssl_key_name=chef.internal.key ssl_cert_name=chef.internal.crt app_name=chef
