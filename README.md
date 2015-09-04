@@ -1,6 +1,6 @@
 **Rueusable Ansible Code**
 
-Before using this repo please refer to https://portal.api.bskyb.com/confluence/display/OI/OTT+Configuration+Management+Tool to understand the standards that are applied to this code base.  If you don't adhere to the defined process, your code will not be able to merge into the master branch.
+Before using this repo please refer to ...url.. to understand the standards that are applied to this code base.  If you don't adhere to the defined process, your code will not be able to merge into the master branch.
 
 1. Each application/project should have variables stored in a file/files in a separate projects/<projectname> directory.  The code will look for the following file - projects/<project_prefix>/<c_type>_<env>.yml where c_type,env and project_prefix are variables that are supplied at the command line to ansible uing --extra-vars "env=XXX project_prefix=XXXXX c_type=XXXX". c_type nomniates the cloud infrastructure eg aws, cloudstack
 
